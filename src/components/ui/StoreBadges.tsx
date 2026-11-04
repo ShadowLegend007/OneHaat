@@ -4,9 +4,9 @@ interface BadgeProps {
   className?: string;
 }
 
-export const AppStoreBadge: React.FC<BadgeProps> = ({ className = 'h-10 sm:h-11 w-auto' }) => (
+export const AppStoreBadge: React.FC<BadgeProps> = ({ className = 'h-9 sm:h-10 w-auto' }) => (
   <img
-    src="/Apple-Store.svg?v=20261104_v2"
+    src="/Apple-Store.svg?v=20261105"
     alt="Download on the App Store"
     width={1567}
     height={464}
@@ -15,9 +15,9 @@ export const AppStoreBadge: React.FC<BadgeProps> = ({ className = 'h-10 sm:h-11 
   />
 );
 
-export const GooglePlayBadge: React.FC<BadgeProps> = ({ className = 'h-10 sm:h-11 w-auto' }) => (
+export const GooglePlayBadge: React.FC<BadgeProps> = ({ className = 'h-9 sm:h-10 w-auto' }) => (
   <img
-    src="/Google-play.png?v=20261104"
+    src="/Google-play.png?v=20261105"
     alt="Get it on Google Play"
     width={1567}
     height={464}

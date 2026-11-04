@@ -76,7 +76,7 @@ export const PhoneMockup: React.FC<PhoneMockupProps> = React.memo(({
       />
 
       {/* 2. Permanently Sized Phone Container (Zero CLS guarantee) */}
-      <div className="relative w-full max-w-[340px] sm:max-w-[380px] lg:max-w-[410px] xl:max-w-[430px] aspect-[480/540] max-h-[min(430px,calc(100vh-8.5rem))] flex items-center justify-center">
+      <div className="relative w-full max-w-[220px] sm:max-w-[300px] md:max-w-[360px] lg:max-w-[400px] aspect-[480/540] max-h-[min(380px,calc(100dvh-12rem))] flex items-center justify-center">
         
         {/* Soft Frosted Phone Silhouette Skeleton Placeholder while current screen loads */}
         <div

@@ -22,16 +22,16 @@ export const Footer: React.FC = React.memo(() => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Top Status & Newsletter Row */}
-        <div className="pb-12 border-b border-slate-100 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div className="pb-8 sm:pb-12 border-b border-slate-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 lg:gap-8">
           
           {/* Live Operational Status Indicator */}
-          <div className="lg:col-span-6 flex flex-col sm:flex-row items-start sm:items-center gap-3">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 shadow-xs">
-              <span className="flex h-2 w-2 relative">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 shadow-2xs shrink-0 select-none">
+              <span className="flex h-2 w-2 relative shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
               </span>
-              <span className="text-xs font-bold text-emerald-800">
+              <span className="text-xs font-bold text-emerald-800 whitespace-nowrap">
                 Launch Preparation Underway
               </span>
             </div>
@@ -41,10 +41,10 @@ export const Footer: React.FC = React.memo(() => {
           </div>
 
           {/* Neighborhood Newsletter */}
-          <div className="lg:col-span-6 flex flex-col sm:flex-row items-center justify-end gap-3">
+          <div className="w-full md:w-auto flex items-center justify-start md:justify-end">
             {subscribed ? (
               <div className="p-2.5 px-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>Subscribed! We’ll send you seasonal bazaar harvest alerts.</span>
               </div>
             ) : (
@@ -75,11 +75,11 @@ export const Footer: React.FC = React.memo(() => {
           duration={0.8}
           stagger={0.06}
           threshold={0.1}
-          className="py-12 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8"
+          className="py-12 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start"
         >
           
-          {/* Brand Info */}
-          <div className="col-span-2 space-y-4">
+          {/* Brand Info (5 cols on lg) */}
+          <div className="lg:col-span-5 space-y-4">
             <a
               href="#"
               className="inline-flex items-center group outline-none focus:outline-none focus:ring-0 focus-visible:outline-none select-none"
@@ -108,43 +108,46 @@ export const Footer: React.FC = React.memo(() => {
             </div>
           </div>
 
-          {/* Column 1: The Launch */}
-          <div className="space-y-3">
-            <div className="font-display font-bold text-xs uppercase tracking-wider text-ink">
-              The Launch
+          {/* 3 Link Columns Group (7 cols on lg, 3 columns on tablet/desktop) */}
+          <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8">
+            {/* Column 1: The Launch */}
+            <div className="space-y-3">
+              <div className="font-display font-bold text-xs uppercase tracking-wider text-ink">
+                The Launch
+              </div>
+              <ul className="space-y-2 text-xs">
+                <li><a href="#vision" className="hover:text-emerald-700 transition-colors">Our Vision & Manifesto</a></li>
+                <li><a href="#pillars" className="hover:text-emerald-700 transition-colors">The 5 Pillars</a></li>
+                <li><a href="#how-it-works" className="hover:text-emerald-700 transition-colors">4-Step Journey</a></li>
+                <li><a href="#stories" className="hover:text-emerald-700 transition-colors">Community Stories</a></li>
+              </ul>
             </div>
-            <ul className="space-y-2 text-xs">
-              <li><a href="#vision" className="hover:text-emerald-700 transition-colors">Our Vision & Manifesto</a></li>
-              <li><a href="#pillars" className="hover:text-emerald-700 transition-colors">The 5 Pillars</a></li>
-              <li><a href="#how-it-works" className="hover:text-emerald-700 transition-colors">4-Step Journey</a></li>
-              <li><a href="#stories" className="hover:text-emerald-700 transition-colors">Community Stories</a></li>
-            </ul>
-          </div>
 
-          {/* Column 2: For Partners */}
-          <div className="space-y-3">
-            <div className="font-display font-bold text-xs uppercase tracking-wider text-ink">
-              For Partners
+            {/* Column 2: For Partners */}
+            <div className="space-y-3">
+              <div className="font-display font-bold text-xs uppercase tracking-wider text-ink">
+                For Partners
+              </div>
+              <ul className="space-y-2 text-xs">
+                <li><a href="#waitlist" className="hover:text-emerald-700 transition-colors">Join as Grocer</a></li>
+                <li><a href="#waitlist" className="hover:text-emerald-700 transition-colors">Partner Mandis</a></li>
+                <li><a href="#waitlist" className="hover:text-emerald-700 transition-colors">Delivery Fleet</a></li>
+                <li><a href="#waitlist" className="hover:text-emerald-700 transition-colors">0% Commission Promise</a></li>
+              </ul>
             </div>
-            <ul className="space-y-2 text-xs">
-              <li><a href="#waitlist" className="hover:text-emerald-700 transition-colors">Join as Grocer</a></li>
-              <li><a href="#waitlist" className="hover:text-emerald-700 transition-colors">Partner Mandis</a></li>
-              <li><a href="#waitlist" className="hover:text-emerald-700 transition-colors">Delivery Fleet</a></li>
-              <li><a href="#waitlist" className="hover:text-emerald-700 transition-colors">0% Commission Promise</a></li>
-            </ul>
-          </div>
 
-          {/* Column 3: Legal & Trust */}
-          <div className="space-y-3">
-            <div className="font-display font-bold text-xs uppercase tracking-wider text-ink">
-              Legal & Trust
+            {/* Column 3: Legal & Trust */}
+            <div className="space-y-3 col-span-2 sm:col-span-1">
+              <div className="font-display font-bold text-xs uppercase tracking-wider text-ink">
+                Legal & Trust
+              </div>
+              <ul className="space-y-2 text-xs">
+                <li><a href="#faq" className="hover:text-emerald-700 transition-colors">Price Parity Guarantee</a></li>
+                <li><a href="#faq" className="hover:text-emerald-700 transition-colors">Privacy & Data Security</a></li>
+                <li><a href="#faq" className="hover:text-emerald-700 transition-colors">Merchant Code of Ethics</a></li>
+                <li><a href="#faq" className="hover:text-emerald-700 transition-colors">FSSAI Compliance</a></li>
+              </ul>
             </div>
-            <ul className="space-y-2 text-xs">
-              <li><a href="#faq" className="hover:text-emerald-700 transition-colors">Price Parity Guarantee</a></li>
-              <li><a href="#faq" className="hover:text-emerald-700 transition-colors">Privacy & Data Security</a></li>
-              <li><a href="#faq" className="hover:text-emerald-700 transition-colors">Merchant Code of Ethics</a></li>
-              <li><a href="#faq" className="hover:text-emerald-700 transition-colors">FSSAI Compliance</a></li>
-            </ul>
           </div>
 
         </AnimatedContent>

@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useState, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { SmoothScroll } from './components/layout/SmoothScroll';
 import { AmbientBackground } from './components/ui/AmbientBackground';
 import { LiquidGlassIntro } from './components/intro/LiquidGlassIntro';
@@ -14,18 +14,9 @@ import { VelocityMarquee } from './components/sections/VelocityMarquee';
 import { ManifestoStatement } from './components/sections/ManifestoStatement';
 import { HaatStack } from './components/sections/HaatStack';
 import { PinnedJourney } from './components/sections/PinnedJourney';
-
-// Below-the-fold Teaser Sections
-const CommunityWall = lazy(() => import('./components/sections/CommunityWall'));
-const FAQSection = lazy(() => import('./components/sections/FAQSection'));
-const FinalCTA = lazy(() => import('./components/sections/FinalCTA'));
-
-const SectionLoader: React.FC = () => (
-  <div className="py-20 flex items-center justify-center text-slate-400 text-sm font-sans" aria-busy="true">
-    <div className="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mr-3" />
-    <span>Loading experience...</span>
-  </div>
-);
+import CommunityWall from './components/sections/CommunityWall';
+import FAQSection from './components/sections/FAQSection';
+import FinalCTA from './components/sections/FinalCTA';
 
 export const App: React.FC = () => {
   const [isIntroComplete, setIsIntroComplete] = useState(true);
@@ -94,23 +85,17 @@ export const App: React.FC = () => {
 
             {/* Section 7: Community Voices & Trust Wall */}
             <AnimatedContent distance={40} direction="vertical" duration={0.85} threshold={0.08}>
-              <Suspense fallback={<SectionLoader />}>
-                <ErrorBoundary><CommunityWall /></ErrorBoundary>
-              </Suspense>
+              <ErrorBoundary><CommunityWall /></ErrorBoundary>
             </AnimatedContent>
 
             {/* Section 8: Frequently Asked Questions */}
             <AnimatedContent distance={40} direction="vertical" duration={0.85} threshold={0.08}>
-              <Suspense fallback={<SectionLoader />}>
-                <ErrorBoundary><FAQSection /></ErrorBoundary>
-              </Suspense>
+              <ErrorBoundary><FAQSection /></ErrorBoundary>
             </AnimatedContent>
 
             {/* Section 9: VIP Early Access Pass & Launch Reservation Hub */}
             <AnimatedContent distance={40} direction="vertical" duration={0.85} threshold={0.08}>
-              <Suspense fallback={<SectionLoader />}>
-                <ErrorBoundary><FinalCTA /></ErrorBoundary>
-              </Suspense>
+              <ErrorBoundary><FinalCTA /></ErrorBoundary>
             </AnimatedContent>
           </main>
 

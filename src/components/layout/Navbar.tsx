@@ -84,36 +84,39 @@ export const Navbar: React.FC = React.memo(() => {
           </a>
 
           {/* Desktop Navigation Links (Teaser Mode) */}
-          <nav className="hidden md:flex items-center gap-2" aria-label="Desktop Navigation">
+          <nav className="hidden md:flex items-center gap-1 lg:gap-1.5" aria-label="Desktop Navigation">
             {navLinks.map((link) => {
               const isActive = activeSection === link.href;
               return (
                 <a
                   key={link.label}
                   href={link.href}
-                  className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 ${
+                  className={`relative px-2.5 lg:px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
                     isActive
-                      ? 'text-emerald-800 bg-emerald-50 font-bold'
-                      : 'text-slate-600 hover:text-ink hover:bg-slate-100/70'
+                      ? 'text-emerald-700 font-bold bg-emerald-50/80'
+                      : 'text-slate-600 hover:text-ink hover:bg-slate-100/60'
                   }`}
                 >
                   {link.label}
+                  {isActive && (
+                    <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-3.5 h-0.5 bg-emerald-600 rounded-full" />
+                  )}
                 </a>
               );
             })}
           </nav>
 
           {/* Right Action Area */}
-          <div className="hidden md:flex items-center gap-3">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-semibold border border-emerald-200/80">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Launching Soon</span>
+          <div className="hidden md:flex items-center gap-2.5 xl:gap-3 shrink-0">
+            <div className="hidden xl:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-semibold border border-emerald-200/70 shrink-0 select-none">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+              <span className="whitespace-nowrap">Launching Soon</span>
             </div>
             <a
               href="#waitlist"
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+              className="inline-flex items-center gap-2 px-3.5 lg:px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap shrink-0"
             >
-              <Bell className="w-3.5 h-3.5" />
+              <Bell className="w-3.5 h-3.5 shrink-0" />
               <span>Get Early Access</span>
             </a>
           </div>

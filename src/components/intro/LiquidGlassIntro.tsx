@@ -4,8 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 const CRITICAL_IMAGES = [
   '/favicon.svg',
   '/hero-character-mockup.svg',
-  '/Apple-Store.svg?v=20261104_v2',
-  '/Google-play.png?v=20261104',
+  '/Apple-Store.svg?v=20261105',
+  '/Google-play.png?v=20261105',
   '/step-1-mockup.svg',
   '/step-2-mockup.svg',
   '/step-3-mockup.svg',
