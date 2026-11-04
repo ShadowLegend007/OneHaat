@@ -3,7 +3,6 @@ import { motion, useScroll, useTransform, useMotionValue, useSpring, Variants } 
 import { ArrowRight, Zap, Store, ShieldCheck, Play } from 'lucide-react';
 import { AppStoreBadge, GooglePlayBadge } from '../ui/StoreBadges';
 import { ImageReveal } from '../ui/ImageReveal';
-import { AnimatedContent } from '../ui/AnimatedContent';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 
 export interface HeroProps {
@@ -103,15 +102,7 @@ export const Hero: React.FC<HeroProps> = React.memo(({ isLoaded = true }) => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
           
           {/* Left Column: Brand Typography, Value Props, CTAs & Store Badges (6 cols) */}
-          <AnimatedContent
-            distance={40}
-            direction="vertical"
-            duration={0.9}
-            ease="power3.out"
-            trigger="mount"
-            delay={0.1}
-            className="lg:col-span-6 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4 sm:space-y-5"
-          >
+          <div className="lg:col-span-6 flex flex-col items-center lg:items-start text-center lg:text-left space-y-4 sm:space-y-5">
             <motion.div
               style={{ y: textY }}
               variants={containerVariants}
@@ -225,20 +216,11 @@ export const Hero: React.FC<HeroProps> = React.memo(({ isLoaded = true }) => {
               </div>
             </motion.div>
           </motion.div>
-        </AnimatedContent>
+        </div>
 
-          {/* Right Column: 3D Character & Phone Mockup Illustration (6 cols) */}
-          <AnimatedContent
-            distance={50}
-            direction="horizontal"
-            reverse={true}
-            duration={1.0}
-            ease="power3.out"
-            trigger="mount"
-            delay={0.2}
-            className="lg:col-span-6 relative flex items-center justify-center pt-4 lg:pt-0"
-          >
-            <div className="relative flex items-center justify-center w-full">
+        {/* Right Column: 3D Character & Phone Mockup Illustration (6 cols) */}
+        <div className="lg:col-span-6 relative flex items-center justify-center pt-4 lg:pt-0">
+          <div className="relative flex items-center justify-center w-full">
             {/* Ambient Aura Glow behind the illustration */}
             <div
               className="absolute w-[360px] sm:w-[440px] h-[360px] sm:h-[440px] rounded-full blur-3xl opacity-40 -z-10 pointer-events-none"
@@ -331,8 +313,8 @@ export const Hero: React.FC<HeroProps> = React.memo(({ isLoaded = true }) => {
                 />
               </motion.div>
             </motion.div>
-            </div>
-          </AnimatedContent>
+          </div>
+        </div>
 
         </div>
       </div>

@@ -51,7 +51,7 @@ export const FinalCTA: React.FC = React.memo(() => {
   };
 
   return (
-    <section id="waitlist" className="relative py-24 sm:py-32 overflow-hidden bg-white">
+    <section id="waitlist" className="relative py-24 sm:py-32 overflow-hidden bg-white scroll-mt-16">
       {/* Background Soft Atmospheric Radiance */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full masked-pastel-blob opacity-35 pointer-events-none -z-10"

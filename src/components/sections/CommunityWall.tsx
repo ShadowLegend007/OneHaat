@@ -107,7 +107,7 @@ export const CommunityWall: React.FC = React.memo(() => {
   }, [activeFilter]);
 
   return (
-    <section id="stories" className="relative py-24 sm:py-32 bg-slate-50/50 overflow-hidden">
+    <section id="stories" className="relative py-24 sm:py-32 bg-slate-50/50 overflow-hidden scroll-mt-16">
       {/* Background Soft Pastel Blob */}
       <div
         className="absolute top-1/2 -right-24 w-[600px] h-[600px] rounded-full masked-pastel-blob opacity-30 pointer-events-none -z-10"

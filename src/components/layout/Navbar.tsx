@@ -28,6 +28,12 @@ export const Navbar: React.FC = React.memo(() => {
         requestAnimationFrame(() => {
           setScrolled(window.scrollY > 20);
 
+          if (window.scrollY < 100) {
+            setActiveSection('');
+            ticking = false;
+            return;
+          }
+
           const sections = ['vision', 'pillars', 'how-it-works', 'stories', 'faq'];
           const current = sections.find((id) => {
             const el = document.getElementById(id);

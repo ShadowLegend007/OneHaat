@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useScroll } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { PhoneMockup, PhoneScreenType } from '../ui/PhoneMockup';
@@ -24,7 +24,6 @@ import {
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
-import { Reveal } from '../ui/Reveal';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 
 interface MicroFeature {
@@ -119,40 +118,61 @@ export const PinnedJourney: React.FC = React.memo(() => {
   const isDesktop = useMediaQuery('(min-width: 1024px)');
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
-  const stepScrollTargets = [0.12, 0.38, 0.64, 0.90];
+  const stepScrollTargets = [0.08, 0.33, 0.58, 0.83];
+
+  const { scrollYProgress } = useScroll({
+    target: desktopTrackRef,
+    offset: ['start start', 'end end'],
+  });
 
   useEffect(() => {
-    if (!isDesktop || !desktopTrackRef.current || !desktopStageRef.current) return;
+    if (!isDesktop) return;
 
-    const ctx = gsap.context(() => {
-      ScrollTrigger.create({
-        trigger: desktopTrackRef.current,
-        start: 'top top+=64px',
-        end: 'bottom bottom',
-        onUpdate: (self) => {
-          // Clean hysteresis thresholds with generous entry/exit buffers:
-          // Step 0 (Discovery): 0.00 to 0.26
-          // Step 1 (Fair Price): 0.26 to 0.52
-          // Step 2 (Hand-Packed): 0.52 to 0.76
-          // Step 3 (20-Min Transit): 0.76 to 1.00
-          const progress = self.progress;
-          let safeIndex = 0;
-          if (progress >= 0.76) {
-            safeIndex = 3;
-          } else if (progress >= 0.52) {
-            safeIndex = 2;
-          } else if (progress >= 0.26) {
-            safeIndex = 1;
-          } else {
-            safeIndex = 0;
-          }
-          setActiveStepIndex((prev) => (prev !== safeIndex ? safeIndex : prev));
-        },
-      });
+    // Smooth scroll synchronization
+    const unsubscribe = scrollYProgress.on('change', (progress) => {
+      let safeIndex = 0;
+      if (progress >= 0.75) {
+        safeIndex = 3;
+      } else if (progress >= 0.50) {
+        safeIndex = 2;
+      } else if (progress >= 0.25) {
+        safeIndex = 1;
+      } else {
+        safeIndex = 0;
+      }
+      setActiveStepIndex((prev) => (prev !== safeIndex ? safeIndex : prev));
     });
 
-    return () => ctx.revert();
-  }, [isDesktop]);
+    let ctx: gsap.Context | null = null;
+    if (desktopTrackRef.current) {
+      ctx = gsap.context(() => {
+        ScrollTrigger.create({
+          trigger: desktopTrackRef.current,
+          start: 'top top+=64px',
+          end: 'bottom bottom',
+          onUpdate: (self) => {
+            const progress = self.progress;
+            let safeIndex = 0;
+            if (progress >= 0.75) {
+              safeIndex = 3;
+            } else if (progress >= 0.50) {
+              safeIndex = 2;
+            } else if (progress >= 0.25) {
+              safeIndex = 1;
+            } else {
+              safeIndex = 0;
+            }
+            setActiveStepIndex((prev) => (prev !== safeIndex ? safeIndex : prev));
+          },
+        });
+      });
+    }
+
+    return () => {
+      unsubscribe();
+      if (ctx) ctx.revert();
+    };
+  }, [scrollYProgress, isDesktop]);
 
   // Center active pill in mobile view
   useEffect(() => {
@@ -188,10 +208,8 @@ export const PinnedJourney: React.FC = React.memo(() => {
     setTouchStartX(null);
     if (Math.abs(diff) > 40) {
       if (diff < 0) {
-        // Swiped left -> advance to next step
         setActiveStepIndex((prev) => Math.min(steps.length - 1, prev + 1));
       } else {
-        // Swiped right -> return to previous step
         setActiveStepIndex((prev) => Math.max(0, prev - 1));
       }
     }
@@ -200,26 +218,24 @@ export const PinnedJourney: React.FC = React.memo(() => {
   const activeStep = steps[activeStepIndex];
 
   return (
-    <section id="how-it-works" className="relative bg-slate-50/70 overflow-visible">
-      {/* Mobile view (< lg) with native swipeable touch controls and zero scroll hijacking */}
+    <section id="how-it-works" className="relative bg-slate-50/70 overflow-visible scroll-mt-16">
+      {/* Mobile view (< lg) */}
       <div className="lg:hidden py-14 px-4 sm:px-6">
-        <Reveal>
-          <div className="text-center max-w-xl mx-auto mb-8">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold uppercase mb-3">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-              <span>The 20-Minute Hyperlocal Loop</span>
-            </div>
-            <h2 className="font-display font-extrabold text-3xl sm:text-4xl text-ink tracking-tight">
-              From shelf to doorstep in{' '}
-              <span className="editorial-accent text-emerald-600 font-normal italic">
-                4 simple steps.
-              </span>{' '}
-              <span className="inline-block text-amber-400 font-sans not-italic text-2xl ml-1">彡</span>
-            </h2>
+        <div className="text-center max-w-xl mx-auto mb-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold uppercase mb-3">
+            <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+            <span>The 20-Minute Hyperlocal Loop</span>
           </div>
-        </Reveal>
+          <h2 className="font-display font-extrabold text-3xl sm:text-4xl text-ink tracking-tight">
+            From shelf to doorstep in{' '}
+            <span className="editorial-accent text-emerald-600 font-normal italic">
+              4 simple steps.
+            </span>{' '}
+            <span className="inline-block text-amber-400 font-sans not-italic text-2xl ml-1">彡</span>
+          </h2>
+        </div>
 
-        {/* Connected Stepper Navigation for Mobile matching User Screenshot */}
+        {/* Connected Stepper Navigation for Mobile */}
         <div ref={mobilePillsRef} className="w-full max-w-md mx-auto mb-6 px-1">
           <div className="flex items-center justify-between relative">
             {steps.map((step, idx) => {
@@ -270,7 +286,7 @@ export const PinnedJourney: React.FC = React.memo(() => {
                             idx < activeStepIndex
                               ? '100%'
                               : idx === activeStepIndex
-                              ? '40%'
+                              ? '50%'
                               : '0%',
                         }}
                         transition={{ duration: 0.35, ease: 'easeOut' }}
@@ -366,10 +382,13 @@ export const PinnedJourney: React.FC = React.memo(() => {
         </div>
       </div>
 
-            {/* Desktop Pinned Scroll View (>= lg) with 420vh track and native sticky stage */}
-      <div ref={desktopTrackRef} className="hidden lg:block relative min-h-[420vh]">
+      {/* Desktop Pinned Scroll View (>= lg): Fits 100% in 1 screen height */}
+      <div ref={desktopTrackRef} className="hidden lg:block relative min-h-[240vh]">
         {/* Pinned Stage: 1-screen viewport below navbar (top-16) with zero overflow */}
-        <div className="sticky top-16 h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] flex items-center justify-center overflow-hidden py-2 xl:py-4 px-4 sm:px-6 lg:px-8">
+        <div
+          ref={desktopStageRef}
+          className="sticky top-16 h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-2 xl:py-4 px-4 sm:px-6 lg:px-8 overflow-hidden"
+        >
           {/* Subtle Ambient Blob Behind Pinned Stage */}
           <div
             className="absolute w-[650px] h-[650px] rounded-full masked-pastel-blob opacity-35 pointer-events-none -z-10"
@@ -381,26 +400,25 @@ export const PinnedJourney: React.FC = React.memo(() => {
           <div className="max-w-7xl mx-auto w-full grid grid-cols-12 gap-8 xl:gap-12 items-center">
             {/* Left 6 Cols: Step Cards Narrative */}
             <div className="col-span-6 flex flex-col justify-center">
-              <Reveal>
-                <div className="mb-2 xl:mb-3">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/60 text-emerald-800 text-[11px] font-bold tracking-wide uppercase w-fit shadow-2xs mb-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>The 20-Minute Hyperlocal Loop</span>
-                  </div>
-
-                  <h2 className="font-display font-extrabold text-2xl xl:text-3xl text-ink tracking-tight leading-[1.15]">
-                    From shelf to doorstep in<br />
-                    <span className="editorial-accent text-emerald-600 font-normal italic">
-                      4 simple steps.
-                    </span>{' '}
-                    <span className="inline-block text-amber-400 font-sans not-italic text-xl xl:text-2xl ml-1 select-none">
-                      彡
-                    </span>
-                  </h2>
+              {/* Clean Section Header (No opacity: 0 wrapper) */}
+              <div className="mb-2 xl:mb-3">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/60 text-emerald-800 text-[11px] font-bold tracking-wide uppercase w-fit shadow-2xs mb-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>The 20-Minute Hyperlocal Loop</span>
                 </div>
-              </Reveal>
 
-              {/* Connected Stepper Navigation Bar matching User Screenshot */}
+                <h2 className="font-display font-extrabold text-2xl xl:text-3xl text-ink tracking-tight leading-[1.15]">
+                  From shelf to doorstep in<br />
+                  <span className="editorial-accent text-emerald-600 font-normal italic">
+                    4 simple steps.
+                  </span>{' '}
+                  <span className="inline-block text-amber-400 font-sans not-italic text-xl xl:text-2xl ml-1 select-none">
+                    彡
+                  </span>
+                </h2>
+              </div>
+
+              {/* Connected Stepper Navigation Bar matching Reference */}
               <div className="w-full max-w-xl my-2 xl:my-3">
                 <div className="flex items-center justify-between relative">
                   {steps.map((step, idx) => {
@@ -428,7 +446,7 @@ export const PinnedJourney: React.FC = React.memo(() => {
                             {idx + 1}
                           </div>
 
-                          {/* Step Label (Mint pill when active matching screenshot) */}
+                          {/* Step Label (Mint pill when active matching reference screenshot) */}
                           <div className="mt-1.5 text-center">
                             <span
                               className={`inline-block whitespace-nowrap text-[11px] xl:text-xs transition-all duration-300 select-none ${
@@ -455,7 +473,7 @@ export const PinnedJourney: React.FC = React.memo(() => {
                                   idx < activeStepIndex
                                     ? '100%'
                                     : idx === activeStepIndex
-                                    ? '40%'
+                                    ? '50%'
                                     : '0%',
                               }}
                               transition={{ duration: 0.35, ease: 'easeOut' }}
@@ -474,9 +492,9 @@ export const PinnedJourney: React.FC = React.memo(() => {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                className="p-5 xl:p-6 rounded-3xl bg-white/95 border border-slate-200/90 shadow-[0_12px_36px_rgba(15,23,42,0.06)] backdrop-blur-xl"
+                className="p-5 xl:p-6 rounded-3xl bg-white border border-slate-200/90 shadow-[0_12px_36px_rgba(15,23,42,0.06)]"
               >
-                {/* Top Row matching Image 1: Icon + Step 0X + Subtitle on left, Badge on right */}
+                {/* Top Row: Icon + Step 0X + Subtitle on left, Badge on right */}
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2.5">
                     <div className="w-7 h-7 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-100/80 shrink-0">
@@ -500,7 +518,7 @@ export const PinnedJourney: React.FC = React.memo(() => {
                   {activeStep.title}
                 </h3>
 
-                <p className="text-slate-600 text-xs xl:text-sm leading-relaxed mb-3">
+                <p className="text-slate-600 text-xs xl:text-sm leading-relaxed mb-3 line-clamp-3">
                   {activeStep.description}
                 </p>
 
@@ -537,4 +555,4 @@ export const PinnedJourney: React.FC = React.memo(() => {
   );
 });
 
-PinnedJourney.displayName = 'PinnedJourney';
+export default PinnedJourney;

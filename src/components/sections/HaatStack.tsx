@@ -1,6 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll } from 'framer-motion';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
+
+gsap.registerPlugin(ScrollTrigger);
 import {
   Sparkles,
   Leaf,
@@ -119,23 +123,47 @@ export const HaatStack: React.FC = React.memo(() => {
     offset: ['start start', 'end end'],
   });
 
-  const stepScrollTargets = [0.08, 0.28, 0.48, 0.68, 0.88];
+  const stepScrollTargets = [0.06, 0.26, 0.46, 0.66, 0.86];
 
   useEffect(() => {
     if (!isDesktop) return;
 
+    // Smooth scroll synchronization
     const unsubscribe = scrollYProgress.on('change', (progress) => {
-      // 5-pillar progressive thresholds
       let idx = 0;
-      if (progress >= 0.78) idx = 4;
-      else if (progress >= 0.58) idx = 3;
-      else if (progress >= 0.38) idx = 2;
-      else if (progress >= 0.18) idx = 1;
+      if (progress >= 0.80) idx = 4;
+      else if (progress >= 0.60) idx = 3;
+      else if (progress >= 0.40) idx = 2;
+      else if (progress >= 0.20) idx = 1;
       else idx = 0;
       setActiveCardIndex((prev) => (prev !== idx ? idx : prev));
     });
 
-    return () => unsubscribe();
+    let ctx: gsap.Context | null = null;
+    if (desktopTrackRef.current) {
+      ctx = gsap.context(() => {
+        ScrollTrigger.create({
+          trigger: desktopTrackRef.current,
+          start: 'top top+=64px',
+          end: 'bottom bottom',
+          onUpdate: (self) => {
+            const progress = self.progress;
+            let idx = 0;
+            if (progress >= 0.80) idx = 4;
+            else if (progress >= 0.60) idx = 3;
+            else if (progress >= 0.40) idx = 2;
+            else if (progress >= 0.20) idx = 1;
+            else idx = 0;
+            setActiveCardIndex((prev) => (prev !== idx ? idx : prev));
+          },
+        });
+      });
+    }
+
+    return () => {
+      unsubscribe();
+      if (ctx) ctx.revert();
+    };
   }, [scrollYProgress, isDesktop]);
 
   const handlePillarClick = (idx: number) => {
@@ -143,7 +171,7 @@ export const HaatStack: React.FC = React.memo(() => {
     if (isDesktop && desktopTrackRef.current) {
       const trackRect = desktopTrackRef.current.getBoundingClientRect();
       const currentScrollY = window.scrollY || window.pageYOffset;
-      const trackTop = trackRect.top + currentScrollY;
+      const trackTop = trackRect.top + currentScrollY - 64;
       const trackHeight = desktopTrackRef.current.offsetHeight - window.innerHeight;
       if (trackHeight > 0) {
         const targetScroll = trackTop + (stepScrollTargets[idx] * trackHeight);
@@ -155,7 +183,7 @@ export const HaatStack: React.FC = React.memo(() => {
   const activePillar = pillars[activeCardIndex];
 
   return (
-    <section id="pillars" className="relative bg-slate-50/60 overflow-visible">
+    <section id="pillars" className="relative bg-slate-50/60 overflow-visible scroll-mt-16">
       {/* Ambient background glow */}
       <div
         className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[750px] h-[750px] rounded-full masked-pastel-blob opacity-25 pointer-events-none -z-10"
@@ -232,17 +260,34 @@ export const HaatStack: React.FC = React.memo(() => {
             {activePillar.description}
           </p>
 
-          <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <activePillar.metricIcon className="w-4 h-4 text-emerald-600" />
-              <span className="text-xs font-bold text-ink">{activePillar.metric}</span>
+          <div className="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap gap-1.5">
+              {activePillar.tags.map((tag, tIdx) => (
+                <span
+                  key={tIdx}
+                  className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 text-xs font-medium"
+                >
+                  {tag}
+                </span>
+              ))}
             </div>
-            <span className="text-[10px] text-slate-500">{activePillar.metricLabel}</span>
+
+            <div className="flex items-center gap-2 bg-emerald-50/80 px-3 py-1.5 rounded-xl border border-emerald-100">
+              <activePillar.metricIcon className="w-4 h-4 text-emerald-700 shrink-0" />
+              <div>
+                <span className="text-xs font-bold text-emerald-900 block leading-none">
+                  {activePillar.metric}
+                </span>
+                <span className="text-[10px] text-emerald-700 font-medium leading-none">
+                  {activePillar.metricLabel}
+                </span>
+              </div>
+            </div>
           </div>
         </motion.div>
 
-        {/* Prev / Next Buttons */}
-        <div className="flex items-center justify-between mt-4 px-1">
+        {/* Mobile Prev/Next navigation */}
+        <div className="flex items-center justify-between mt-6">
           <button
             type="button"
             onClick={() => setActiveCardIndex((prev) => Math.max(0, prev - 1))}
@@ -250,15 +295,17 @@ export const HaatStack: React.FC = React.memo(() => {
             className={`flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-full border transition-all ${
               activeCardIndex === 0
                 ? 'opacity-35 cursor-not-allowed border-slate-200 text-slate-400'
-                : 'border-slate-300 text-slate-700 hover:bg-slate-50'
+                : 'border-slate-300 text-slate-700 hover:bg-white active:scale-95'
             }`}
           >
             <ChevronLeft className="w-3.5 h-3.5" />
-            <span>Previous</span>
+            <span>Prev</span>
           </button>
+
           <span className="text-xs font-semibold text-slate-400">
             {activeCardIndex + 1} of {pillars.length}
           </span>
+
           <button
             type="button"
             onClick={() => setActiveCardIndex((prev) => Math.min(pillars.length - 1, prev + 1))}
@@ -266,7 +313,7 @@ export const HaatStack: React.FC = React.memo(() => {
             className={`flex items-center gap-1 text-xs font-bold px-3.5 py-1.5 rounded-full border transition-all ${
               activeCardIndex === pillars.length - 1
                 ? 'opacity-35 cursor-not-allowed border-slate-200 text-slate-400'
-                : 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
+                : 'bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700 active:scale-95 shadow-sm'
             }`}
           >
             <span>Next</span>
@@ -276,9 +323,9 @@ export const HaatStack: React.FC = React.memo(() => {
       </div>
 
       {/* Desktop (>= lg): Pinned 1-Screen Sticky-Scroll Stage */}
-      <div ref={desktopTrackRef} className="hidden lg:block relative min-h-[360vh]">
+      <div ref={desktopTrackRef} className="hidden lg:block relative min-h-[250vh]">
         {/* Pinned Stage: Fits 100% in one screen height below navbar (top-16) with zero overflow */}
-        <div className="sticky top-16 h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] flex flex-col justify-between items-center px-4 sm:px-6 lg:px-8 py-4 sm:py-5 overflow-hidden">
+        <div className="sticky top-16 h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] flex flex-col justify-center items-center gap-4 xl:gap-5 px-4 sm:px-6 lg:px-8 py-3 xl:py-4 overflow-hidden">
           
           {/* 1. Header inside Pinned Stage */}
           <div className="text-center max-w-2xl mx-auto shrink-0">
@@ -299,7 +346,7 @@ export const HaatStack: React.FC = React.memo(() => {
           </div>
 
           {/* 2. Stacking Cards Deck in the Center (Fits in one screen) */}
-          <div className="w-full max-w-3xl xl:max-w-4xl h-[260px] xl:h-[280px] relative flex items-center justify-center my-auto">
+          <div className="w-full max-w-3xl xl:max-w-4xl h-[260px] xl:h-[280px] relative flex items-center justify-center shrink-0">
             {pillars.map((pillar, index) => {
               const Icon = pillar.icon;
               const MetricIcon = pillar.metricIcon;
@@ -311,13 +358,13 @@ export const HaatStack: React.FC = React.memo(() => {
                   key={pillar.id}
                   initial={false}
                   animate={{
-                    y: !isVisible ? '140%' : `${index * 8}px`,
-                    scale: !isVisible ? 0.95 : Math.max(0.86, 1 - depth * 0.035),
+                    y: !isVisible ? '140%' : `${depth * -6}px`,
+                    scale: !isVisible ? 0.95 : Math.max(0.88, 1 - depth * 0.035),
                     opacity: !isVisible ? 0 : 1,
-                    zIndex: index + 1,
+                    zIndex: 10 - depth,
                   }}
-                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-                  className={`absolute inset-x-0 mx-auto w-full max-w-3xl xl:max-w-4xl rounded-3xl bg-gradient-to-br ${pillar.gradient} bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-[0_16px_40px_rgba(15,23,42,0.08)] p-5 xl:p-6 flex flex-col justify-between`}
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                  className={`absolute inset-x-0 mx-auto w-full max-w-3xl xl:max-w-4xl rounded-3xl bg-gradient-to-br ${pillar.gradient} bg-white border border-slate-200/90 shadow-[0_16px_40px_rgba(15,23,42,0.08)] p-5 xl:p-6 flex flex-col justify-between`}
                   style={{
                     transformOrigin: 'top center',
                   }}
@@ -325,7 +372,7 @@ export const HaatStack: React.FC = React.memo(() => {
                   {/* Subtle darkening tint on cards behind */}
                   <div
                     className="absolute inset-0 rounded-3xl bg-slate-900 pointer-events-none transition-opacity duration-300"
-                    style={{ opacity: isVisible && depth > 0 ? Math.min(0.28, depth * 0.08) : 0 }}
+                    style={{ opacity: isVisible && depth > 0 ? Math.min(0.24, depth * 0.08) : 0 }}
                   />
 
                   <div>
@@ -392,7 +439,7 @@ export const HaatStack: React.FC = React.memo(() => {
           </div>
 
           {/* 3. Pillar Stepper Indicators below Deck */}
-          <div className="flex items-center gap-2 z-20 shrink-0 pt-2">
+          <div className="flex items-center gap-2 z-20 shrink-0">
             {pillars.map((p, idx) => {
               const isActive = idx === activeCardIndex;
               const isPast = idx < activeCardIndex;

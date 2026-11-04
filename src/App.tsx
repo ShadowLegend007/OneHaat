@@ -28,7 +28,7 @@ const SectionLoader: React.FC = () => (
 );
 
 export const App: React.FC = () => {
-  const [isIntroComplete, setIsIntroComplete] = useState(false);
+  const [isIntroComplete, setIsIntroComplete] = useState(true);
   const handleIntroComplete = useCallback(() => setIsIntroComplete(true), []);
 
   return (

@@ -97,8 +97,6 @@ export const AnimatedContent: React.FC<AnimatedContentProps> = ({
       scroller = document.querySelector(container);
     } else if (container) {
       scroller = container;
-    } else if (typeof document !== 'undefined') {
-      scroller = document.getElementById('snap-main-container');
     }
 
     const reduce = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
@@ -190,6 +188,14 @@ export const AnimatedContent: React.FC<AnimatedContentProps> = ({
         return;
       }
 
+      // Check if already in viewport on mount to prevent any blank appearance
+      if (typeof window !== 'undefined') {
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= window.innerHeight * (1 - threshold) && rect.bottom >= 0) {
+          tl.play();
+        }
+      }
+
       const start = `top ${(1 - threshold) * 100}%`;
 
       if (scrub) {
@@ -217,6 +223,22 @@ export const AnimatedContent: React.FC<AnimatedContentProps> = ({
               tl.reverse();
             }
       });
+
+      // Guaranteed IntersectionObserver fallback so content is never blank
+      if (typeof window !== 'undefined' && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                tl.play();
+                if (once) observer.disconnect();
+              }
+            }
+          },
+          { threshold: Math.min(Math.max(threshold, 0), 0.3) }
+        );
+        observer.observe(el);
+      }
     }, el);
 
     return () => ctx.revert();
@@ -247,7 +269,7 @@ export const AnimatedContent: React.FC<AnimatedContentProps> = ({
   ]);
 
   return (
-    <div ref={ref} className={className} style={{ visibility: 'hidden', ...style }} {...props}>
+    <div ref={ref} className={className} style={style} {...props}>
       {children}
     </div>
   );

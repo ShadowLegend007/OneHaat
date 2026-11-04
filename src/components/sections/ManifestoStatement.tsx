@@ -82,7 +82,7 @@ export const ManifestoStatement: React.FC = React.memo(() => {
     <section
       id="vision"
       ref={containerRef}
-      className="relative py-20 sm:py-28 lg:py-36 bg-white flex flex-col items-center justify-center text-center overflow-hidden"
+      className="relative py-20 sm:py-28 lg:py-36 bg-white flex flex-col items-center justify-center text-center overflow-hidden scroll-mt-16"
     >
       {/* Background Soft Pastel Glow */}
       <div

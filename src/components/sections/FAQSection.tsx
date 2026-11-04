@@ -70,7 +70,7 @@ export const FAQSection: React.FC = React.memo(() => {
   }, []);
 
   return (
-    <section id="faq" className="relative py-24 sm:py-32 bg-white overflow-hidden">
+    <section id="faq" className="relative py-24 sm:py-32 bg-white overflow-hidden scroll-mt-16">
       {/* Background Soft Pastel Blob */}
       <div
         className="absolute top-1/3 -left-20 w-[550px] h-[550px] rounded-full masked-pastel-blob opacity-30 pointer-events-none -z-10"

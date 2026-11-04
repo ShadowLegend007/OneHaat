@@ -18,16 +18,28 @@ interface LiquidGlassIntroProps {
 }
 
 export const LiquidGlassIntro: React.FC<LiquidGlassIntroProps> = ({ onComplete }) => {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return !sessionStorage.getItem('onehaat_intro_seen');
+    }
+    return true;
+  });
+
   const isMountedRef = useRef(true);
   const finishTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const finishedCountRef = useRef(0);
 
   useEffect(() => {
     isMountedRef.current = true;
-    finishedCountRef.current = 0;
+
+    // If already seen in this session, trigger complete immediately
+    if (typeof window !== 'undefined' && sessionStorage.getItem('onehaat_intro_seen')) {
+      onComplete?.();
+      return;
+    }
+
     const startTime = Date.now();
-    const minDuration = 1800; // Calibrated 1.8s for a calm, premium reveal
+    const minDuration = 450; // Brisk 450ms reveal so the page is never blocked
     const total = CRITICAL_IMAGES.length;
 
     const checkCompletion = () => {
@@ -37,7 +49,11 @@ export const LiquidGlassIntro: React.FC<LiquidGlassIntroProps> = ({ onComplete }
 
       finishTimerRef.current = setTimeout(() => {
         if (isMountedRef.current) {
+          if (typeof window !== 'undefined') {
+            sessionStorage.setItem('onehaat_intro_seen', '1');
+          }
           setIsVisible(false);
+          onComplete?.();
         }
       }, remaining);
     };
@@ -71,19 +87,32 @@ export const LiquidGlassIntro: React.FC<LiquidGlassIntroProps> = ({ onComplete }
       }
     });
 
-    // Safety fallback: if anything stalls on slow networks, reveal after 3.5s
+    // Safety fallback: if anything stalls, dismiss after 1.2s
     const safetyTimer = setTimeout(() => {
       if (isMountedRef.current) {
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('onehaat_intro_seen', '1');
+        }
         setIsVisible(false);
+        onComplete?.();
       }
-    }, 3500);
+    }, 1200);
 
     return () => {
       isMountedRef.current = false;
       clearTimeout(safetyTimer);
       if (finishTimerRef.current) clearTimeout(finishTimerRef.current);
     };
-  }, []);
+  }, [onComplete]);
+
+  // Click-to-dismiss handler so the user is never stuck
+  const handleDismiss = () => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('onehaat_intro_seen', '1');
+    }
+    setIsVisible(false);
+    onComplete?.();
+  };
 
   return (
     <AnimatePresence onExitComplete={onComplete}>
@@ -94,9 +123,10 @@ export const LiquidGlassIntro: React.FC<LiquidGlassIntroProps> = ({ onComplete }
           exit={{
             opacity: 0,
             scale: 1.02,
-            transition: { duration: 0.85, ease: [0.16, 1, 0.3, 1] },
+            transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
           }}
-          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white/95 backdrop-blur-2xl select-none"
+          onClick={handleDismiss}
+          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white/95 backdrop-blur-2xl select-none cursor-pointer"
         >
           {/* Subtle Ambient Pastel Blobs */}
           <div
@@ -109,7 +139,7 @@ export const LiquidGlassIntro: React.FC<LiquidGlassIntroProps> = ({ onComplete }
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-col items-center gap-6"
           >
             <div className="relative h-16 sm:h-20 aspect-[688.5/459] flex items-center">

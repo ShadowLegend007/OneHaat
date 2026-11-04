@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import Lenis from 'lenis';
+import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 
@@ -10,21 +11,19 @@ export interface SmoothScrollProps {
 export const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
   const reducedMotion = useReducedMotion();
   const lenisRef = useRef<Lenis | null>(null);
-  const rafIdRef = useRef<number>(0);
 
   useEffect(() => {
     // If user prefers reduced motion, disable custom smooth scrolling
     if (reducedMotion || typeof window === 'undefined') return;
 
     const lenis = new Lenis({
-      duration: 0.95,
+      duration: 1.0,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 0.9,
-      syncTouch: false,
-      touchMultiplier: 0,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.0,
     });
 
     lenisRef.current = lenis;
@@ -35,14 +34,37 @@ export const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
     };
     lenis.on('scroll', handleScroll);
 
-    const raf = (time: number) => {
-      lenis.raf(time);
-      rafIdRef.current = requestAnimationFrame(raf);
+    // Sync Lenis with GSAP ticker for 60/120fps lockstep
+    const updateTicker = (time: number) => {
+      lenis.raf(time * 1000);
     };
-    rafIdRef.current = requestAnimationFrame(raf);
+    gsap.ticker.add(updateTicker);
+    gsap.ticker.lagSmoothing(0);
+
+    // Initial ScrollTrigger refresh after DOM layout
+    const refreshTimer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 150);
+
+    // Smooth anchor link scrolling with navbar offset
+    const handleAnchorClick = (e: MouseEvent) => {
+      const target = (e.target as HTMLElement).closest('a');
+      if (!target) return;
+      const href = target.getAttribute('href');
+      if (href && href.startsWith('#') && href.length > 1) {
+        const el = document.querySelector(href);
+        if (el) {
+          e.preventDefault();
+          lenis.scrollTo(el as HTMLElement, { offset: -64, duration: 1.1 });
+        }
+      }
+    };
+    document.addEventListener('click', handleAnchorClick);
 
     return () => {
-      cancelAnimationFrame(rafIdRef.current);
+      clearTimeout(refreshTimer);
+      document.removeEventListener('click', handleAnchorClick);
+      gsap.ticker.remove(updateTicker);
       lenis.off('scroll', handleScroll);
       lenis.destroy();
       lenisRef.current = null;

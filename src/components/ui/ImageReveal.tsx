@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 
 interface ImageRevealProps {
@@ -24,7 +24,14 @@ export const ImageReveal: React.FC<ImageRevealProps> = ({
   imageClassName = '',
   children,
 }) => {
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(priority);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    if (imgRef.current?.complete) {
+      setIsLoaded(true);
+    }
+  }, []);
 
   return (
     <div
@@ -32,6 +39,7 @@ export const ImageReveal: React.FC<ImageRevealProps> = ({
       style={aspectRatio ? { aspectRatio } : undefined}
     >
       <motion.img
+        ref={imgRef}
         src={src}
         alt={alt}
         width={width}
@@ -39,12 +47,12 @@ export const ImageReveal: React.FC<ImageRevealProps> = ({
         loading={priority ? 'eager' : 'lazy'}
         fetchPriority={priority ? 'high' : 'auto'}
         onLoad={() => setIsLoaded(true)}
-        initial={{ opacity: 0, scale: 0.98 }}
+        initial={{ opacity: priority ? 1 : 0, scale: priority ? 1 : 0.98 }}
         animate={{
           opacity: isLoaded ? 1 : 0,
           scale: isLoaded ? 1 : 0.98,
         }}
-        transition={{ duration: 0.5, ease: 'easeOut' }}
+        transition={{ duration: 0.4, ease: 'easeOut' }}
         className={`w-full h-full select-none ${imageClassName}`}
       />
       {children}
