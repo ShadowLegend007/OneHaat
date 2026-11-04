@@ -54,6 +54,9 @@ export interface ScrollStackProps {
   onStackComplete?: () => void;
 }
 
+const SCRAMBLE_FACTORS = [-1.15, 1.35, -0.85, 1.25, -1.05, 0.9, -1.15];
+const SCRAMBLE_SHIFTS = [-8, 10, -6, 9, -7, 6, -8];
+
 export const ScrollStack: React.FC<ScrollStackProps> = ({
   children,
   className = '',
@@ -191,13 +194,19 @@ export const ScrollStack: React.FC<ScrollStackProps> = ({
         const lean = Math.min(depth, 1);
         const scale = Math.max(Math.min(settings.baseScale, 1), 1 - depth * settings.itemScale);
         const tilt = -lean * settings.tiltAmount;
-        const turn = lean * settings.rotationAmount * (i % 2 ? -1 : 1);
+
+        // Organic scrambled angles and subtle lateral shifts
+        const rotFactor = SCRAMBLE_FACTORS[i % SCRAMBLE_FACTORS.length];
+        const shiftFactor = SCRAMBLE_SHIFTS[i % SCRAMBLE_SHIFTS.length];
+        const turn = lean * settings.rotationAmount * rotFactor;
+        const shiftX = lean * (settings.rotationAmount > 0 ? shiftFactor : 0);
+
         const blur = depth * settings.blurAmount;
         const dim = 1 - Math.pow(1 - dimStep, depth);
         const transform =
           depth < 0.0005
             ? ''
-            : `perspective(1200px) rotateX(${tilt.toFixed(2)}deg) rotate(${turn.toFixed(2)}deg) scale(${scale.toFixed(4)})`;
+            : `perspective(1200px) translate3d(${shiftX.toFixed(1)}px, 0, 0) rotateX(${tilt.toFixed(2)}deg) rotate(${turn.toFixed(2)}deg) scale(${scale.toFixed(4)})`;
         write(`transform${i}`, transform, value => {
           card.style.transform = value;
         });

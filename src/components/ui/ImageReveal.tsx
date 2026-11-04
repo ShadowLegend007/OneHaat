@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, TargetAndTransition, Transition } from 'framer-motion';
 
-interface ImageRevealProps {
+export interface ImageRevealProps {
   src: string;
   alt: string;
   aspectRatio?: string;
@@ -10,6 +10,8 @@ interface ImageRevealProps {
   priority?: boolean;
   containerClassName?: string;
   imageClassName?: string;
+  continuousAnimate?: TargetAndTransition;
+  continuousTransition?: Transition;
   children?: React.ReactNode;
 }
 
@@ -22,6 +24,8 @@ export const ImageReveal: React.FC<ImageRevealProps> = ({
   priority = false,
   containerClassName = '',
   imageClassName = '',
+  continuousAnimate,
+  continuousTransition,
   children,
 }) => {
   const [isLoaded, setIsLoaded] = useState(priority);
@@ -48,11 +52,19 @@ export const ImageReveal: React.FC<ImageRevealProps> = ({
         fetchPriority={priority ? 'high' : 'auto'}
         onLoad={() => setIsLoaded(true)}
         initial={{ opacity: priority ? 1 : 0, scale: priority ? 1 : 0.98 }}
-        animate={{
-          opacity: isLoaded ? 1 : 0,
-          scale: isLoaded ? 1 : 0.98,
-        }}
-        transition={{ duration: 0.4, ease: 'easeOut' }}
+        animate={
+          continuousAnimate && isLoaded
+            ? continuousAnimate
+            : {
+                opacity: isLoaded ? 1 : 0,
+                scale: isLoaded ? 1 : 0.98,
+              }
+        }
+        transition={
+          continuousTransition && isLoaded
+            ? continuousTransition
+            : { duration: 0.4, ease: 'easeOut' }
+        }
         className={`w-full h-full select-none ${imageClassName}`}
       />
       {children}

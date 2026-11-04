@@ -1,10 +1,6 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { motion, useScroll } from 'framer-motion';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { PhoneMockup, PhoneScreenType } from '../ui/PhoneMockup';
-
-gsap.registerPlugin(ScrollTrigger);
 import {
   Compass,
   Sparkles,
@@ -110,92 +106,223 @@ const steps: StepData[] = [
   },
 ];
 
+const cardVariants: Variants = {
+  enter: (dir: number) => ({
+    opacity: 0,
+    y: dir >= 0 ? 22 : -22,
+    filter: 'blur(5px)',
+    scale: 0.98,
+  }),
+  center: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    scale: 1,
+    transition: {
+      duration: 0.42,
+      ease: [0.16, 1, 0.3, 1],
+      staggerChildren: 0.05,
+      delayChildren: 0.03,
+    },
+  },
+  exit: (dir: number) => ({
+    opacity: 0,
+    y: dir >= 0 ? -18 : 18,
+    filter: 'blur(4px)',
+    scale: 0.98,
+    transition: {
+      duration: 0.28,
+      ease: [0.16, 1, 0.3, 1],
+    },
+  }),
+};
+
+const itemChildVariants: Variants = {
+  enter: { opacity: 0, y: 8 },
+  center: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.35,
+      ease: [0.16, 1, 0.3, 1],
+    },
+  },
+  exit: { opacity: 0, y: -6, transition: { duration: 0.2 } },
+};
+
 export const PinnedJourney: React.FC = React.memo(() => {
   const desktopTrackRef = useRef<HTMLDivElement>(null);
   const desktopStageRef = useRef<HTMLDivElement>(null);
   const mobilePillsRef = useRef<HTMLDivElement>(null);
-  const [activeStepIndex, setActiveStepIndex] = useState(0);
+  const [[activeStepIndex, direction], setStepState] = useState<[number, number]>([0, 1]);
+  const activeStepRef = useRef(0);
+  const isAnimatingRef = useRef(false);
+  const animTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isDesktop = useMediaQuery('(min-width: 1024px)');
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
 
-  const stepScrollTargets = [0.08, 0.33, 0.58, 0.83];
+  useEffect(() => {
+    activeStepRef.current = activeStepIndex;
+  }, [activeStepIndex]);
 
-  const { scrollYProgress } = useScroll({
-    target: desktopTrackRef,
-    offset: ['start start', 'end end'],
-  });
+  const updateStep = useCallback((newIndex: number) => {
+    setStepState(([prevIndex]) => {
+      if (prevIndex === newIndex) return [prevIndex, 1];
+      activeStepRef.current = newIndex;
+      return [newIndex, newIndex > prevIndex ? 1 : -1];
+    });
+  }, []);
 
+  // Click handler that smoothly switches step
+  const handleStepClick = useCallback(
+    (idx: number) => {
+      if (isAnimatingRef.current && idx === activeStepRef.current) return;
+      isAnimatingRef.current = true;
+      updateStep(idx);
+      if (animTimerRef.current) clearTimeout(animTimerRef.current);
+      animTimerRef.current = setTimeout(() => {
+        isAnimatingRef.current = false;
+      }, 600);
+    },
+    [updateStep]
+  );
+
+  // Helper for smooth section exit transition
+  const navigateToSection = (id: string) => {
+    const lenis = (window as any).__lenis;
+    const target = document.getElementById(id);
+    if (!target) return;
+    if (lenis?.scrollTo) {
+      lenis.scrollTo(target, { offset: -64, duration: 1.0 });
+    } else {
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Discrete single-scroll step controller with animation gating
   useEffect(() => {
     if (!isDesktop) return;
 
-    // Smooth scroll synchronization
-    const unsubscribe = scrollYProgress.on('change', (progress) => {
-      let safeIndex = 0;
-      if (progress >= 0.75) {
-        safeIndex = 3;
-      } else if (progress >= 0.50) {
-        safeIndex = 2;
-      } else if (progress >= 0.25) {
-        safeIndex = 1;
-      } else {
-        safeIndex = 0;
-      }
-      setActiveStepIndex((prev) => (prev !== safeIndex ? safeIndex : prev));
-    });
+    const onWheel = (e: WheelEvent) => {
+      if (!desktopTrackRef.current || !desktopStageRef.current) return;
 
-    let ctx: gsap.Context | null = null;
-    if (desktopTrackRef.current) {
-      ctx = gsap.context(() => {
-        ScrollTrigger.create({
-          trigger: desktopTrackRef.current,
-          start: 'top top+=64px',
-          end: 'bottom bottom',
-          onUpdate: (self) => {
-            const progress = self.progress;
-            let safeIndex = 0;
-            if (progress >= 0.75) {
-              safeIndex = 3;
-            } else if (progress >= 0.50) {
-              safeIndex = 2;
-            } else if (progress >= 0.25) {
-              safeIndex = 1;
-            } else {
-              safeIndex = 0;
-            }
-            setActiveStepIndex((prev) => (prev !== safeIndex ? safeIndex : prev));
-          },
-        });
-      });
-    }
+      const trackRect = desktopTrackRef.current.getBoundingClientRect();
+
+      // Check if stage is pinned under navbar (top: ~64px) with track active
+      const isPinned = trackRect.top <= 75 && trackRect.bottom >= window.innerHeight + 50;
+      if (!isPinned) return;
+
+      const delta = e.deltaY;
+      if (Math.abs(delta) < 12) return;
+
+      const currentStep = activeStepRef.current;
+
+      if (delta > 0) {
+        // Scrolling DOWN
+        if (currentStep < steps.length - 1) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          if (isAnimatingRef.current) return;
+
+          isAnimatingRef.current = true;
+          const nextStep = currentStep + 1;
+          updateStep(nextStep);
+
+          if (animTimerRef.current) clearTimeout(animTimerRef.current);
+          animTimerRef.current = setTimeout(() => {
+            isAnimatingRef.current = false;
+          }, 600);
+        } else {
+          // On Step 4 (last step): scrolling down smoothly advances to Community stories
+          e.preventDefault();
+          navigateToSection('stories');
+        }
+      } else {
+        // Scrolling UP
+        if (currentStep > 0) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          if (isAnimatingRef.current) return;
+
+          isAnimatingRef.current = true;
+          const prevStep = currentStep - 1;
+          updateStep(prevStep);
+
+          if (animTimerRef.current) clearTimeout(animTimerRef.current);
+          animTimerRef.current = setTimeout(() => {
+            isAnimatingRef.current = false;
+          }, 600);
+        } else {
+          // On Step 1 (first step): scrolling up smoothly advances back to Pillars
+          e.preventDefault();
+          navigateToSection('pillars');
+        }
+      }
+    };
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (!desktopTrackRef.current || !desktopStageRef.current) return;
+      const trackRect = desktopTrackRef.current.getBoundingClientRect();
+      const isPinned = trackRect.top <= 75 && trackRect.bottom >= window.innerHeight + 50;
+      if (!isPinned) return;
+
+      const currentStep = activeStepRef.current;
+
+      if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+        if (currentStep < steps.length - 1) {
+          e.preventDefault();
+          if (isAnimatingRef.current) return;
+          isAnimatingRef.current = true;
+          const nextStep = currentStep + 1;
+          updateStep(nextStep);
+          if (animTimerRef.current) clearTimeout(animTimerRef.current);
+          animTimerRef.current = setTimeout(() => {
+            isAnimatingRef.current = false;
+          }, 600);
+        } else {
+          e.preventDefault();
+          navigateToSection('stories');
+        }
+      } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+        if (currentStep > 0) {
+          e.preventDefault();
+          if (isAnimatingRef.current) return;
+          isAnimatingRef.current = true;
+          const prevStep = currentStep - 1;
+          updateStep(prevStep);
+          if (animTimerRef.current) clearTimeout(animTimerRef.current);
+          animTimerRef.current = setTimeout(() => {
+            isAnimatingRef.current = false;
+          }, 600);
+        } else {
+          e.preventDefault();
+          navigateToSection('pillars');
+        }
+      }
+    };
+
+    window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('keydown', onKeyDown);
 
     return () => {
-      unsubscribe();
-      if (ctx) ctx.revert();
+      window.removeEventListener('wheel', onWheel);
+      window.removeEventListener('keydown', onKeyDown);
+      if (animTimerRef.current) clearTimeout(animTimerRef.current);
     };
-  }, [scrollYProgress, isDesktop]);
+  }, [isDesktop, updateStep]);
 
   // Center active pill in mobile view
   useEffect(() => {
-    if (!isDesktop && mobilePillsRef.current && mobilePillsRef.current.children[activeStepIndex]) {
-      const activeBtn = mobilePillsRef.current.children[activeStepIndex] as HTMLElement;
-      activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-    }
-  }, [activeStepIndex, isDesktop]);
-
-  // Click handler that smoothly synchronizes scroll position on desktop
-  const handleStepClick = (idx: number) => {
-    setActiveStepIndex(idx);
-    if (isDesktop && desktopTrackRef.current) {
-      const trackRect = desktopTrackRef.current.getBoundingClientRect();
-      const currentScrollY = window.scrollY || window.pageYOffset;
-      const trackTop = trackRect.top + currentScrollY - 64;
-      const trackHeight = desktopTrackRef.current.offsetHeight - window.innerHeight;
-      if (trackHeight > 0) {
-        const targetScroll = trackTop + (stepScrollTargets[idx] * trackHeight);
-        window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+    if (!isDesktop && mobilePillsRef.current) {
+      const container = mobilePillsRef.current.firstElementChild;
+      if (container && container.children[activeStepIndex]) {
+        const activeBtn = container.children[activeStepIndex] as HTMLElement;
+        activeBtn.scrollIntoView?.({ behavior: 'smooth', block: 'nearest', inline: 'center' });
       }
     }
-  };
+  }, [activeStepIndex, isDesktop]);
 
   // Mobile swipe gestures
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -208,14 +335,14 @@ export const PinnedJourney: React.FC = React.memo(() => {
     setTouchStartX(null);
     if (Math.abs(diff) > 40) {
       if (diff < 0) {
-        setActiveStepIndex((prev) => Math.min(steps.length - 1, prev + 1));
+        updateStep(Math.min(steps.length - 1, activeStepIndex + 1));
       } else {
-        setActiveStepIndex((prev) => Math.max(0, prev - 1));
+        updateStep(Math.max(0, activeStepIndex - 1));
       }
     }
   };
 
-  const activeStep = steps[activeStepIndex];
+  const activeStep = steps[activeStepIndex] ?? steps[0];
 
   return (
     <section id="how-it-works" className="relative bg-slate-50/70 overflow-visible scroll-mt-16">
@@ -305,52 +432,66 @@ export const PinnedJourney: React.FC = React.memo(() => {
           onTouchEnd={handleTouchEnd}
           className="flex flex-col items-center gap-6"
         >
-          <PhoneMockup screen={activeStep.id} className="scale-95 origin-center" />
+          <PhoneMockup screen={activeStep.id} direction={direction} className="scale-95 origin-center" />
 
-          {/* Active Step Card */}
-          <motion.div
-            key={activeStep.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full max-w-md p-6 rounded-3xl bg-white border border-slate-200/90 shadow-md space-y-4"
-          >
-            <div className="flex items-center justify-between">
-              <div className="text-xs font-bold text-emerald-700 uppercase tracking-wider">
-                Step {activeStep.stepNum} • {activeStep.subtitle}
-              </div>
-              <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-bold border border-emerald-200">
-                {activeStep.badge}
-              </span>
-            </div>
-
-            <h3 className="font-display font-extrabold text-2xl text-ink">
-              {activeStep.title}
-            </h3>
-
-            <p className="text-slate-600 text-sm leading-relaxed">
-              {activeStep.description}
-            </p>
-
-            <div className="grid grid-cols-1 gap-2.5 pt-3 border-t border-slate-100">
-              {activeStep.microFeatures.map((feat, i) => {
-                const Icon = feat.icon;
-                return (
-                  <div key={i} className="flex items-center gap-2.5 text-xs font-medium text-slate-700">
-                    <div className="w-5 h-5 rounded-md bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
-                      <Icon className="w-3.5 h-3.5" />
+          {/* Active Step Card with Changing Transition */}
+          <div className="w-full max-w-md min-h-[290px]">
+            <AnimatePresence mode="wait" custom={direction}>
+              <motion.div
+                key={activeStep.id}
+                custom={direction}
+                variants={cardVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                className="w-full p-6 rounded-3xl bg-white border border-slate-200/90 shadow-md space-y-4"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <motion.div
+                      key={`m-icon-${activeStep.id}`}
+                      initial={{ scale: 0.8, rotate: -10 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      className="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0"
+                    >
+                      <activeStep.tabIcon className="w-3.5 h-3.5" />
+                    </motion.div>
+                    <div className="text-xs font-bold text-emerald-700 uppercase tracking-wider">
+                      Step {activeStep.stepNum} • {activeStep.subtitle}
                     </div>
-                    <span>{feat.text}</span>
                   </div>
-                );
-              })}
-            </div>
-          </motion.div>
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-bold border border-emerald-200">
+                    {activeStep.badge}
+                  </span>
+                </div>
+
+                <h3 className="font-display font-extrabold text-2xl text-ink">
+                  {activeStep.title}
+                </h3>
+
+                <p className="text-slate-600 text-sm leading-relaxed">
+                  {activeStep.description}
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-3 border-t border-slate-100">
+                  {activeStep.microFeatures.map((feat, i) => {
+                    const Icon = feat.icon;
+                    return (
+                      <div key={i} className="flex items-center gap-2 text-xs font-medium text-slate-700">
+                        <Icon className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        <span className="text-[11px] font-semibold text-slate-700 leading-tight">{feat.text}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
 
           {/* Quick Prev / Next Buttons for Mobile */}
           <div className="flex items-center justify-between w-full max-w-md px-2">
             <button
-              onClick={() => setActiveStepIndex((prev) => Math.max(0, prev - 1))}
+              onClick={() => updateStep(Math.max(0, activeStepIndex - 1))}
               disabled={activeStepIndex === 0}
               className={`flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-full border transition-all ${
                 activeStepIndex === 0
@@ -367,7 +508,7 @@ export const PinnedJourney: React.FC = React.memo(() => {
             </span>
 
             <button
-              onClick={() => setActiveStepIndex((prev) => Math.min(steps.length - 1, prev + 1))}
+              onClick={() => updateStep(Math.min(steps.length - 1, activeStepIndex + 1))}
               disabled={activeStepIndex === steps.length - 1}
               className={`flex items-center gap-1 text-xs font-bold px-3.5 py-1.5 rounded-full border transition-all ${
                 activeStepIndex === steps.length - 1
@@ -383,11 +524,11 @@ export const PinnedJourney: React.FC = React.memo(() => {
       </div>
 
       {/* Desktop Pinned Scroll View (>= lg): Fits 100% in 1 screen height */}
-      <div ref={desktopTrackRef} className="hidden lg:block relative min-h-[240vh]">
+      <div ref={desktopTrackRef} className="hidden lg:block relative min-h-[300vh]">
         {/* Pinned Stage: 1-screen viewport below navbar (top-16) with zero overflow */}
         <div
           ref={desktopStageRef}
-          className="sticky top-16 h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-2 xl:py-4 px-4 sm:px-6 lg:px-8 overflow-hidden"
+          className="sticky top-16 h-[calc(100vh-4rem)] max-h-[calc(100vh-4rem)] flex flex-col justify-center items-center py-3 xl:py-5 px-4 sm:px-6 lg:px-8 overflow-hidden"
         >
           {/* Subtle Ambient Blob Behind Pinned Stage */}
           <div
@@ -401,13 +542,13 @@ export const PinnedJourney: React.FC = React.memo(() => {
             {/* Left 6 Cols: Step Cards Narrative */}
             <div className="col-span-6 flex flex-col justify-center">
               {/* Clean Section Header (No opacity: 0 wrapper) */}
-              <div className="mb-2 xl:mb-3">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200/60 text-emerald-800 text-[11px] font-bold tracking-wide uppercase w-fit shadow-2xs mb-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+              <div className="mb-2 xl:mb-2.5">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200/60 text-emerald-800 text-[10px] xl:text-[11px] font-bold tracking-wide uppercase w-fit shadow-2xs mb-1">
+                  <Sparkles className="w-3 h-3 text-emerald-600" />
                   <span>The 20-Minute Hyperlocal Loop</span>
                 </div>
 
-                <h2 className="font-display font-extrabold text-2xl xl:text-3xl text-ink tracking-tight leading-[1.15]">
+                <h2 className="font-display font-extrabold text-2xl xl:text-3xl text-ink tracking-tight leading-tight">
                   From shelf to doorstep in<br />
                   <span className="editorial-accent text-emerald-600 font-normal italic">
                     4 simple steps.
@@ -419,7 +560,7 @@ export const PinnedJourney: React.FC = React.memo(() => {
               </div>
 
               {/* Connected Stepper Navigation Bar matching Reference */}
-              <div className="w-full max-w-xl my-2 xl:my-3">
+              <div className="w-full max-w-xl my-2 xl:my-2.5">
                 <div className="flex items-center justify-between relative">
                   {steps.map((step, idx) => {
                     const isPast = idx < activeStepIndex;
@@ -435,9 +576,9 @@ export const PinnedJourney: React.FC = React.memo(() => {
                         >
                           {/* Number Circle */}
                           <div
-                            className={`w-8 h-8 xl:w-9 xl:h-9 rounded-full flex items-center justify-center font-bold text-xs xl:text-sm transition-all duration-300 select-none ${
+                            className={`w-7 h-7 xl:w-8 xl:h-8 rounded-full flex items-center justify-center font-bold text-xs transition-all duration-300 select-none ${
                               isActive
-                                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30 ring-4 ring-emerald-100 scale-105'
+                                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30 ring-3 ring-emerald-100 scale-105'
                                 : isPast
                                 ? 'bg-emerald-600 text-white shadow-xs'
                                 : 'bg-white border-2 border-slate-300 text-slate-500 group-hover:border-slate-400 group-hover:text-slate-700'
@@ -447,11 +588,11 @@ export const PinnedJourney: React.FC = React.memo(() => {
                           </div>
 
                           {/* Step Label (Mint pill when active matching reference screenshot) */}
-                          <div className="mt-1.5 text-center">
+                          <div className="mt-1 text-center">
                             <span
-                              className={`inline-block whitespace-nowrap text-[11px] xl:text-xs transition-all duration-300 select-none ${
+                              className={`inline-block whitespace-nowrap text-[10px] xl:text-[11px] transition-all duration-300 select-none ${
                                 isActive
-                                  ? 'font-bold text-emerald-800 bg-emerald-100/90 px-3 py-0.5 rounded-full border border-emerald-200/60 shadow-2xs'
+                                  ? 'font-bold text-emerald-800 bg-emerald-100/90 px-2.5 py-0.5 rounded-full border border-emerald-200/60 shadow-2xs'
                                   : isPast
                                   ? 'font-semibold text-slate-700'
                                   : 'font-medium text-slate-500 group-hover:text-slate-700'
@@ -486,66 +627,89 @@ export const PinnedJourney: React.FC = React.memo(() => {
                 </div>
               </div>
 
-              {/* Active Step Card */}
-              <motion.div
-                key={activeStep.id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                className="p-5 xl:p-6 rounded-3xl bg-white border border-slate-200/90 shadow-[0_12px_36px_rgba(15,23,42,0.06)]"
-              >
-                {/* Top Row: Icon + Step 0X + Subtitle on left, Badge on right */}
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-7 h-7 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-100/80 shrink-0">
-                      <activeStep.tabIcon className="w-3.5 h-3.5" />
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider">
-                        Step {activeStep.stepNum}
-                      </span>
-                      <span className="text-xs font-medium text-slate-500">
-                        {activeStep.subtitle}
-                      </span>
-                    </div>
-                  </div>
-                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-bold border border-emerald-200/80">
-                    {activeStep.badge}
-                  </span>
-                </div>
-
-                <h3 className="font-display font-extrabold text-xl xl:text-2xl text-ink my-1.5">
-                  {activeStep.title}
-                </h3>
-
-                <p className="text-slate-600 text-xs xl:text-sm leading-relaxed mb-3 line-clamp-3">
-                  {activeStep.description}
-                </p>
-
-                {/* 3-Column Micro-Features Row */}
-                <div className="grid grid-cols-3 gap-2.5 pt-3 border-t border-slate-100">
-                  {activeStep.microFeatures.map((feat, i) => {
-                    const Icon = feat.icon;
-                    return (
-                      <div key={i} className="flex flex-col gap-1 text-left">
-                        <div className="w-6 h-6 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
-                          <Icon className="w-3 h-3" />
+              {/* Active Step Card with Changing Transition */}
+              <div className="relative min-h-[250px] xl:min-h-[260px]">
+                <AnimatePresence mode="wait" custom={direction}>
+                  <motion.div
+                    key={activeStep.id}
+                    custom={direction}
+                    variants={cardVariants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    className="p-5 xl:p-6 rounded-3xl bg-white border border-slate-200/90 shadow-[0_12px_36px_rgba(15,23,42,0.06)]"
+                  >
+                    {/* Top Row: Icon + Step 0X + Subtitle on left, Badge on right */}
+                    <motion.div variants={itemChildVariants} className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2.5">
+                        <motion.div
+                          key={`icon-${activeStep.id}`}
+                          initial={{ rotate: -15, scale: 0.8 }}
+                          animate={{ rotate: 0, scale: 1 }}
+                          transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                          className="w-7 h-7 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center border border-emerald-100/80 shrink-0"
+                        >
+                          <activeStep.tabIcon className="w-3.5 h-3.5" />
+                        </motion.div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider">
+                            Step {activeStep.stepNum}
+                          </span>
+                          <span className="text-xs font-medium text-slate-500">
+                            {activeStep.subtitle}
+                          </span>
                         </div>
-                        <span className="text-[11px] font-semibold text-slate-700 leading-snug">
-                          {feat.text}
-                        </span>
                       </div>
-                    );
-                  })}
-                </div>
-              </motion.div>
+                      <motion.span
+                        key={`badge-${activeStep.id}`}
+                        initial={{ scale: 0.85, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.25 }}
+                        className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-bold border border-emerald-200/80"
+                      >
+                        {activeStep.badge}
+                      </motion.span>
+                    </motion.div>
+
+                    <motion.h3 variants={itemChildVariants} className="font-display font-extrabold text-xl xl:text-2xl text-ink my-1.5">
+                      {activeStep.title}
+                    </motion.h3>
+
+                    <motion.p variants={itemChildVariants} className="text-slate-600 text-xs xl:text-sm leading-relaxed mb-3 line-clamp-3">
+                      {activeStep.description}
+                    </motion.p>
+
+                    {/* 3-Column Micro-Features Row matching Reference Design (Image 2 & 3) */}
+                    <motion.div variants={itemChildVariants} className="grid grid-cols-3 gap-3 pt-3 border-t border-slate-100">
+                      {activeStep.microFeatures.map((feat, i) => {
+                        const Icon = feat.icon;
+                        return (
+                          <motion.div
+                            key={i}
+                            initial={{ opacity: 0, y: 6 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.12 + i * 0.05, duration: 0.3, ease: 'easeOut' }}
+                            className="flex flex-col items-start text-left"
+                          >
+                            <Icon className="w-4 h-4 text-emerald-600 mb-1 shrink-0" />
+                            <span className="text-[10px] xl:text-[11px] font-semibold text-slate-700 leading-tight">
+                              {feat.text}
+                            </span>
+                          </motion.div>
+                        );
+                      })}
+                    </motion.div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
             </div>
 
-            {/* Right 6 Cols: Pinned Phone with Mockup Visuals */}
+            {/* Right 6 Cols: Pinned Phone with Mockup Visuals & Changing Transition */}
             <div className="col-span-6 flex items-center justify-center relative">
               <PhoneMockup
                 screen={activeStep.id}
-                className="w-full max-w-[340px] lg:max-w-[380px] xl:max-w-[420px] origin-center"
+                direction={direction}
+                className="w-full max-w-[320px] lg:max-w-[350px] xl:max-w-[390px] origin-center"
               />
             </div>
           </div>

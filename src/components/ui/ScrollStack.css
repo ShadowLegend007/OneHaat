@@ -11,7 +11,9 @@
 
 .scroll-stack__inner {
   position: relative;
-  padding-inline: clamp(1rem, 6%, 5rem);
+  max-width: 56rem;
+  margin-inline: auto;
+  padding-inline: clamp(1rem, 4%, 2rem);
 }
 
 .scroll-stack__slot {
@@ -22,15 +24,15 @@
   position: relative;
   box-sizing: border-box;
   width: 100%;
-  min-height: 18rem;
-  padding: 2.25rem;
+  min-height: 14rem;
+  padding: 1.25rem 1.75rem;
   border-radius: 28px;
   background: #ffffff;
   color: #0f172a;
   box-shadow:
     0 0 0 1px rgba(0, 0, 0, 0.06),
-    0 -12px 40px -16px rgba(0, 0, 0, 0.12),
-    0 24px 48px -24px rgba(0, 0, 0, 0.14);
+    0 -10px 32px -12px rgba(15, 23, 42, 0.08),
+    0 24px 48px -20px rgba(15, 23, 42, 0.12);
   transform-origin: 50% 0;
   will-change: transform;
 }
@@ -41,8 +43,8 @@
     color: light-dark(#18181b, #fafafa);
     box-shadow:
       0 0 0 1px light-dark(rgb(0 0 0 / 0.06), rgb(255 255 255 / 0.08)),
-      0 -12px 40px -16px rgb(0 0 0 / 0.35),
-      0 24px 48px -24px rgb(0 0 0 / 0.4);
+      0 -10px 32px -12px rgb(0 0 0 / 0.12),
+      0 24px 48px -20px rgb(0 0 0 / 0.16);
   }
 }
 
@@ -50,7 +52,8 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: #000;
+  background: #0f172a;
   opacity: var(--scroll-stack-dim, 0);
   pointer-events: none;
+  transition: opacity 0.15s ease-out;
 }

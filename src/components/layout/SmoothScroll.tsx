@@ -27,6 +27,7 @@ export const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
     });
 
     lenisRef.current = lenis;
+    (window as any).__lenis = lenis;
 
     // Synchronize Lenis scroll events with GSAP ScrollTrigger
     const handleScroll = () => {
@@ -68,6 +69,7 @@ export const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
       lenis.off('scroll', handleScroll);
       lenis.destroy();
       lenisRef.current = null;
+      delete (window as any).__lenis;
     };
   }, [reducedMotion]);
 
