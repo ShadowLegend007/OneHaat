@@ -8,30 +8,9 @@ import { AnimatedContent } from '../ui/AnimatedContent';
 
 export const Footer: React.FC = React.memo(() => {
   return (
-    <footer className="relative bg-white border-t border-slate-200/80 pt-16 pb-12 overflow-hidden text-slate-600 text-sm">
+    <footer className="relative bg-white border-t border-slate-200/80 pt-12 pb-12 overflow-hidden text-slate-600 text-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Top Status & Contact Row */}
-        {/* Top Operational Status Bar */}
-        <div className="pb-8 sm:pb-12 border-b border-slate-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 lg:gap-8">
-          
-          {/* Live Operational Status Indicator */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 shadow-2xs shrink-0 select-none">
-              <span className="flex h-2 w-2 relative shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-              </span>
-              <span className="text-xs font-bold text-emerald-800 whitespace-nowrap">
-                Launch Preparation Underway
-              </span>
-            </div>
-            <span className="text-xs text-slate-400">
-              1,420+ local shops connecting across Bengaluru
-            </span>
-          </div>
-        </div>
-
         {/* Links Navigation Matrix (Teaser Aligned) */}
         <AnimatedContent
           distance={30}
