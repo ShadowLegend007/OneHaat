@@ -65,9 +65,7 @@ export const FinalCTA: React.FC = React.memo(() => {
 
       // 2. Fallback for static environments without a serverless backend
       if (!response.ok) {
-        const apiKey =
-          (import.meta as any).env?.VITE_RESEND_API_KEY ||
-          're_32sEr6g8_3eT8LsQRfeqSLoUk1VNUQK5x';
+        const apiKey = (import.meta as any).env?.VITE_RESEND_API_KEY || '';
 
         try {
           await fetch('https://api.resend.com/emails', {

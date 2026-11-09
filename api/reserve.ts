@@ -192,10 +192,7 @@ export default async function handler(req: any, res: any) {
     return res.status(400).json({ error: 'Valid email address is required' });
   }
 
-  const apiKey =
-    process.env.RESEND_API_KEY ||
-    process.env.VITE_RESEND_API_KEY ||
-    're_32sEr6g8_3eT8LsQRfeqSLoUk1VNUQK5x';
+  const apiKey = process.env.RESEND_API_KEY || process.env.VITE_RESEND_API_KEY || '';
 
   const userName = extractNameFromEmail(email);
   const userHandle = email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '').toLowerCase() || 'neighbor';
