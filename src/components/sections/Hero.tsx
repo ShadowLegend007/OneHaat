@@ -3,6 +3,7 @@ import { motion, useScroll, useTransform, useMotionValue, useSpring, Variants } 
 import { ArrowRight, Zap, Store, ShieldCheck, Play } from 'lucide-react';
 import { AppStoreBadge, GooglePlayBadge } from '../ui/StoreBadges';
 import { ImageReveal } from '../ui/ImageReveal';
+import { WaterGlassLink } from '../ui/WaterGlassButton';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 
 export interface HeroProps {
@@ -100,7 +101,7 @@ export const Hero: React.FC<HeroProps> = React.memo(({ isLoaded = true }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         {/* Main 2-Column Hero Layout matching reference design */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
-          
+
           {/* Left Column: Brand Typography, Value Props, CTAs & Store Badges (6 cols) */}
           <div className="lg:col-span-6 flex flex-col items-center lg:items-start text-center lg:text-left space-y-2.5 sm:space-y-3.5">
             <motion.div
@@ -110,211 +111,215 @@ export const Hero: React.FC<HeroProps> = React.memo(({ isLoaded = true }) => {
               animate={isLoaded ? 'visible' : 'hidden'}
               className="flex flex-col items-center lg:items-start text-center lg:text-left space-y-2.5 sm:space-y-3.5 w-full"
             >
-            {/* Pill Tag with calm, stable live beacon */}
-            <motion.div
-              variants={itemVariants}
-              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200/80 shadow-2xs backdrop-blur-md"
-            >
-              <span className="relative flex h-2 w-2 items-center justify-center">
-                <span className="absolute inline-flex h-3 w-3 rounded-full bg-emerald-400/25" />
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
-              </span>
-              <span className="text-[11px] sm:text-xs font-semibold text-slate-800 tracking-tight">
-                A hyperlocal marketplace for everyday needs
-              </span>
-            </motion.div>
-
-            {/* Display Headline with animated line reveal */}
-            <motion.h1
-              variants={itemVariants}
-              className="font-display font-extrabold text-ink text-3xl sm:text-4xl lg:text-[2.6rem] xl:text-[3.1rem] leading-[1.08] tracking-tight"
-            >
-              Your Neighbourhood<br />
-              Store, <span className="editorial-accent text-emerald-600 font-normal italic">at Your Doorstep.</span>{' '}
-              <span className="inline-block text-amber-400 font-sans not-italic text-2xl sm:text-3xl ml-1 select-none">
-                //
-              </span>
-            </motion.h1>
-
-            {/* Clean Subhead */}
-            <motion.p
-              variants={itemVariants}
-              className="max-w-md text-xs sm:text-sm lg:text-base text-slate-600 font-normal leading-relaxed"
-            >
-              Order fresh groceries and daily staples from local shops you trust — fast, simple, and reliable.
-            </motion.p>
-
-            {/* Primary CTAs */}
-            <motion.div
-              variants={itemVariants}
-              className="flex flex-row items-center gap-2.5 pt-0.5 w-full sm:w-auto justify-center lg:justify-start"
-            >
-              {/* Primary Green Pill CTA */}
-              <a
-                href="#waitlist"
-                className="flex-1 sm:flex-initial px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-600/25 transition-all flex items-center justify-center gap-1.5 group whitespace-nowrap"
-              >
-                <span>Get VIP Early Access</span>
-                <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-              </a>
-
-              {/* Secondary White Pill CTA */}
-              <a
-                href="#how-it-works"
-                className="flex-1 sm:flex-initial px-4 sm:px-5 py-2.5 sm:py-3 rounded-full bg-white hover:bg-slate-50 active:scale-98 text-slate-800 font-bold text-xs sm:text-sm border border-slate-200/90 shadow-2xs transition-all flex items-center justify-center gap-1.5 whitespace-nowrap"
-              >
-                <Play className="w-3 h-3 fill-slate-800 text-slate-800" />
-                <span>See How It Works</span>
-              </a>
-            </motion.div>
-
-            {/* Official Store Buttons from Assets */}
-            <motion.div
-              variants={itemVariants}
-              className="flex flex-col items-center lg:items-start gap-1.5 pt-0.5"
-            >
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                  Coming Soon To Mobile
-                </span>
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.4)]" />
-              </div>
-              <div className="flex items-center gap-2.5">
-                <a
-                  href="#waitlist"
-                  className="inline-block transition-transform hover:scale-105 active:scale-95"
-                  aria-label="Download on the App Store"
-                >
-                  <AppStoreBadge className="h-9 sm:h-10 w-auto" />
-                </a>
-                <a
-                  href="#waitlist"
-                  className="inline-block transition-transform hover:scale-105 active:scale-95"
-                  aria-label="Get it on Google Play"
-                >
-                  <GooglePlayBadge className="h-9 sm:h-10 w-auto" />
-                </a>
-              </div>
-            </motion.div>
-
-            {/* 3 Value Props Pills */}
-            <motion.div
-              variants={itemVariants}
-              className="flex flex-wrap items-center justify-center lg:justify-start gap-1.5 sm:gap-2 pt-0.5"
-            >
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200/70 text-[11px] sm:text-xs font-semibold text-slate-700 shadow-2xs">
-                <Zap className="w-3.5 h-3.5 text-emerald-600" />
-                <span>20-Min Delivery</span>
-              </div>
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200/70 text-[11px] sm:text-xs font-semibold text-slate-700 shadow-2xs">
-                <Store className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Direct Store Shelves</span>
-              </div>
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200/70 text-[11px] sm:text-xs font-semibold text-slate-700 shadow-2xs">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Zero Hidden Markup</span>
-              </div>
-            </motion.div>
-          </motion.div>
-        </div>
-
-        {/* Right Column: 3D Character & Phone Mockup Illustration (6 cols) */}
-        <div className="lg:col-span-6 relative flex items-center justify-center pt-4 lg:pt-0">
-          <div className="relative flex items-center justify-center w-full">
-            {/* Ambient Aura Glow behind the illustration */}
-            <div
-              className="absolute w-[360px] sm:w-[440px] h-[360px] sm:h-[440px] rounded-full blur-3xl opacity-40 -z-10 pointer-events-none"
-              style={{
-                background:
-                  'radial-gradient(circle, rgba(16, 185, 129, 0.35) 0%, rgba(254, 240, 138, 0.25) 50%, transparent 75%)',
-              }}
-            />
-
-            {/* Outer Entrance Reveal Container with Fixed Reserved Space */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={isLoaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
-              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
-              className="relative flex items-center justify-center z-10 w-full max-w-[480px] sm:max-w-[520px] lg:max-w-[560px] xl:max-w-[600px]"
-            >
-              {/* Parallax & Mouse Tilt Layer with Permanent Fixed Aspect Ratio Container */}
+              {/* Pill Tag with calm, stable live beacon */}
               <motion.div
-                style={{
-                  y: phoneY,
-                  rotateX: isHoverDevice ? rotateX : 0,
-                  rotateY: isHoverDevice ? rotateY : 0,
-                  transformPerspective: 1000,
-                  willChange: 'transform',
-                }}
-                className="relative flex items-center justify-center w-full aspect-[600.75/586.5] max-h-[260px] sm:max-h-[320px] lg:max-h-[min(380px,calc(100dvh-9rem))] transform-gpu"
+                variants={itemVariants}
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-slate-200/80 shadow-2xs backdrop-blur-md"
               >
-                {/* Floating Micro-badge 1: Delivery Speed */}
-                <motion.div
-                  animate={{
-                    y: [-4, 5, -4],
-                    rotate: [-0.5, 1, -0.5],
-                  }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 6.8,
-                    ease: 'easeInOut',
-                  }}
-                  className="absolute -top-3 left-0 sm:left-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-2xl shadow-lg border border-slate-200/80 flex items-center gap-2.5 pointer-events-none select-none"
-                >
-                  <div className="w-7 h-7 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600">
-                    <Zap className="w-4 h-4 fill-emerald-500 text-emerald-600" />
-                  </div>
-                  <div>
-                    <div className="text-[11px] font-bold text-slate-900 leading-none">18 Mins</div>
-                    <div className="text-[9px] text-slate-400 font-semibold leading-tight">Lightning Delivery</div>
-                  </div>
-                </motion.div>
+                <span className="relative flex h-2 w-2 items-center justify-center">
+                  <span className="absolute inline-flex h-3 w-3 rounded-full bg-emerald-400/25" />
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
+                </span>
+                <span className="text-[11px] sm:text-xs font-semibold text-slate-800 tracking-tight">
+                  One Step Ahead for Your Everyday Needs
+                </span>
+              </motion.div>
 
-                {/* Floating Micro-badge 2: Trusted Grocers */}
-                <motion.div
-                  animate={{
-                    y: [5, -4, 5],
-                    rotate: [1, -0.5, 1],
-                  }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 7.5,
-                    ease: 'easeInOut',
-                    delay: 0.5,
-                  }}
-                  className="absolute -bottom-2 right-0 sm:right-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-2xl shadow-lg border border-slate-200/80 flex items-center gap-2.5 pointer-events-none select-none"
-                >
-                  <div className="w-7 h-7 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600">
-                    <Store className="w-4 h-4 text-amber-600" />
-                  </div>
-                  <div>
-                    <div className="text-[11px] font-bold text-slate-900 leading-none">1,400+</div>
-                    <div className="text-[9px] text-slate-400 font-semibold leading-tight">Local Grocers</div>
-                  </div>
-                </motion.div>
+              {/* Display Headline with animated line reveal */}
+              <motion.h1
+                variants={itemVariants}
+                className="font-display font-extrabold text-ink text-3xl sm:text-4xl lg:text-[2.6rem] xl:text-[3.1rem] leading-[1.08] tracking-tight"
+              >
+                Your Trusted<br />
+                Store, <span className="editorial-accent text-emerald-600 font-normal italic">Now at Your Doorstep.</span>{' '}
+                <span className="inline-block text-amber-400 font-sans not-italic text-2xl sm:text-3xl ml-1 select-none">
+                //
+                </span>
+              </motion.h1>
 
-                {/* Main 3D Hero Mockup Illustration with Dedicated ImageReveal (Zero CLS + Smooth Reveal Animation) */}
-                <ImageReveal
-                  src="/hero-character-mockup.svg"
-                  alt="OneHaat App and Character"
-                  aspectRatio="600.75 / 586.5"
-                  width={801}
-                  height={782}
-                  priority={true}
-                  containerClassName="rounded-3xl flex items-center justify-center"
-                  imageClassName="drop-shadow-md"
-                  continuousAnimate={isLoaded ? { opacity: 1, scale: [1, 1.015, 1] } : { opacity: 1, scale: 1 }}
-                  continuousTransition={{
-                    repeat: Infinity,
-                    duration: 7.5,
-                    ease: 'easeInOut',
-                    delay: 0.3,
-                  }}
-                />
+              {/* Clean Subhead */}
+              <motion.p
+                variants={itemVariants}
+                className="max-w-md text-xs sm:text-sm lg:text-base text-slate-600 font-normal leading-relaxed"
+              >
+                Order fresh groceries and daily staples from local shops you trust — fast, simple, and reliable.
+              </motion.p>
+
+              {/* Primary CTAs */}
+              <motion.div
+                variants={itemVariants}
+                className="flex flex-row items-center gap-2.5 pt-0.5 w-full sm:w-auto justify-center lg:justify-start"
+              >
+                {/* Primary Emerald Water Glass CTA */}
+                <WaterGlassLink
+                  href="#waitlist"
+                  variant="emerald"
+                  size="default"
+                  className="flex-1 sm:flex-initial whitespace-nowrap"
+                >
+                  <span>Get VIP Early Access</span>
+                  <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
+                </WaterGlassLink>
+
+                {/* Secondary Crystal Clear Water Glass CTA */}
+                <WaterGlassLink
+                  href="#how-it-works"
+                  variant="clear"
+                  size="default"
+                  className="flex-1 sm:flex-initial whitespace-nowrap"
+                >
+                  <Play className="w-3 h-3 fill-slate-800 text-slate-800" />
+                  <span>See How It Works</span>
+                </WaterGlassLink>
+              </motion.div>
+
+              {/* Official Store Buttons from Assets */}
+              <motion.div
+                variants={itemVariants}
+                className="flex flex-col items-center lg:items-start gap-1.5 pt-0.5"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-xs sm:text-sm font-bold text-slate-700 uppercase tracking-wider">
+                    Coming Soon To Mobile
+                  </span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse" />
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <a
+                    href="#waitlist"
+                    className="inline-block transition-transform hover:scale-105 active:scale-95"
+                    aria-label="Download on the App Store"
+                  >
+                    <AppStoreBadge className="h-9 sm:h-10 w-auto" />
+                  </a>
+                  <a
+                    href="#waitlist"
+                    className="inline-block transition-transform hover:scale-105 active:scale-95"
+                    aria-label="Get it on Google Play"
+                  >
+                    <GooglePlayBadge className="h-9 sm:h-10 w-auto" />
+                  </a>
+                </div>
+              </motion.div>
+
+              {/* 3 Value Props Pills */}
+              <motion.div
+                variants={itemVariants}
+                className="flex flex-wrap items-center justify-center lg:justify-start gap-1.5 sm:gap-2 pt-0.5"
+              >
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200/70 text-[11px] sm:text-xs font-semibold text-slate-700 shadow-2xs">
+                  <Zap className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>9 Min 59 Sec Avg. Delivery</span>
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200/70 text-[11px] sm:text-xs font-semibold text-slate-700 shadow-2xs">
+                  <Store className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Direct Store Shelves</span>
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200/70 text-[11px] sm:text-xs font-semibold text-slate-700 shadow-2xs">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Zero Hidden Markup</span>
+                </div>
               </motion.div>
             </motion.div>
           </div>
-        </div>
+
+          {/* Right Column: 3D Character & Phone Mockup Illustration (6 cols) */}
+          <div className="lg:col-span-6 relative flex items-center justify-center pt-4 lg:pt-0">
+            <div className="relative flex items-center justify-center w-full">
+              {/* Ambient Aura Glow behind the illustration */}
+              <div
+                className="absolute w-[360px] sm:w-[440px] h-[360px] sm:h-[440px] rounded-full blur-3xl opacity-40 -z-10 pointer-events-none"
+                style={{
+                  background:
+                    'radial-gradient(circle, rgba(16, 185, 129, 0.35) 0%, rgba(254, 240, 138, 0.25) 50%, transparent 75%)',
+                }}
+              />
+
+              {/* Outer Entrance Reveal Container with Fixed Reserved Space */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.96 }}
+                animate={isLoaded ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.15 }}
+                className="relative flex items-center justify-center z-10 w-full max-w-[480px] sm:max-w-[520px] lg:max-w-[560px] xl:max-w-[600px]"
+              >
+                {/* Parallax & Mouse Tilt Layer with Permanent Fixed Aspect Ratio Container */}
+                <motion.div
+                  style={{
+                    y: phoneY,
+                    rotateX: isHoverDevice ? rotateX : 0,
+                    rotateY: isHoverDevice ? rotateY : 0,
+                    transformPerspective: 1000,
+                    willChange: 'transform',
+                  }}
+                  className="relative flex items-center justify-center w-full aspect-[600.75/586.5] max-h-[260px] sm:max-h-[320px] lg:max-h-[min(380px,calc(100dvh-9rem))] transform-gpu"
+                >
+                  {/* Floating Micro-badge 1: Delivery Speed */}
+                  <motion.div
+                    animate={{
+                      y: [-4, 5, -4],
+                      rotate: [-0.5, 1, -0.5],
+                    }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 6.8,
+                      ease: 'easeInOut',
+                    }}
+                    className="absolute -top-3 left-0 sm:left-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-2xl shadow-lg border border-slate-200/80 flex items-center gap-2.5 pointer-events-none select-none"
+                  >
+                    <div className="w-7 h-7 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600">
+                      <Zap className="w-4 h-4 fill-emerald-500 text-emerald-600" />
+                    </div>
+                    <div>
+                      <div className="text-[11px] font-bold text-slate-900 leading-none">9m 59s</div>
+                      <div className="text-[9px] text-slate-400 font-semibold leading-tight">Average Delivery Time</div>
+                    </div>
+                  </motion.div>
+
+                  {/* Floating Micro-badge 2: Trusted Grocers */}
+                  <motion.div
+                    animate={{
+                      y: [5, -4, 5],
+                      rotate: [1, -0.5, 1],
+                    }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 7.5,
+                      ease: 'easeInOut',
+                      delay: 0.5,
+                    }}
+                    className="absolute -bottom-2 right-0 sm:right-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-2xl shadow-lg border border-slate-200/80 flex items-center gap-2.5 pointer-events-none select-none"
+                  >
+                    <div className="w-7 h-7 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-600">
+                      <Store className="w-4 h-4 text-amber-600" />
+                    </div>
+                    <div>
+                      <div className="text-[11px] font-bold text-slate-900 leading-none">64+</div>
+                      <div className="text-[9px] text-slate-400 font-semibold leading-tight">Local Grocery At Nearest Location</div>
+                    </div>
+                  </motion.div>
+
+                  {/* Main 3D Hero Mockup Illustration with Dedicated ImageReveal (Zero CLS + Smooth Reveal Animation) */}
+                  <ImageReveal
+                    src="/hero-character-mockup.svg"
+                    alt="OneHaat App and Character"
+                    aspectRatio="600.75 / 586.5"
+                    width={801}
+                    height={782}
+                    priority={true}
+                    containerClassName="rounded-3xl flex items-center justify-center"
+                    imageClassName="drop-shadow-md"
+                    continuousAnimate={isLoaded ? { opacity: 1, scale: [1, 1.015, 1] } : { opacity: 1, scale: 1 }}
+                    continuousTransition={{
+                      repeat: Infinity,
+                      duration: 7.5,
+                      ease: 'easeInOut',
+                      delay: 0.3,
+                    }}
+                  />
+                </motion.div>
+              </motion.div>
+            </div>
+          </div>
 
         </div>
       </div>

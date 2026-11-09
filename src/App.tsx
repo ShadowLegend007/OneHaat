@@ -19,8 +19,18 @@ import FAQSection from './components/sections/FAQSection';
 import FinalCTA from './components/sections/FinalCTA';
 
 export const App: React.FC = () => {
-  const [isIntroComplete, setIsIntroComplete] = useState(true);
+  const [isIntroComplete, setIsIntroComplete] = useState(false);
   const handleIntroComplete = useCallback(() => setIsIntroComplete(true), []);
+
+  // Ensure every reload starts at the very top of the site
+  React.useLayoutEffect(() => {
+    if (typeof window !== 'undefined') {
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+      window.scrollTo(0, 0);
+    }
+  }, []);
 
   return (
     <ClickSpark

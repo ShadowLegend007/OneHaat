@@ -2,23 +2,23 @@ import React from 'react';
 import { Store } from 'lucide-react';
 
 const marqueeCategories = [
-  '20-MIN HYPERLOCAL DELIVERY',
+  '9 MIN 59 SEC AVERAGE DELIVERY',
   'DIRECT FROM VERIFIED LOCAL SHOPS',
-  'MORNING HARVEST GREENS',
+  'ESSENTIAL MEDICAL & PHARMA',
   'ZERO WAREHOUSE MARKUP',
-  'PURE A2 FARM DAIRY',
+  'DIRECT WHOLESALE BAZAAR',
   'STONE-GROUND SPICES',
-  'WOODFIRED SOURDOUGH',
+  'BULK WHOLESALE COUNTER SAVINGS',
   'INSTANT UPI SETTLEMENTS',
 ];
 
 const partnerShops = [
   { name: 'Gupta Brothers Provisions', est: '1982', category: 'Spices & Staples', badge: 'Corner Gem' },
-  { name: 'Krishna Pure Dairy & Sweets', est: '1995', category: 'Fresh A2 Milk', badge: 'Generational' },
-  { name: 'Annapurna Organic Farm Mandi', est: '2004', category: 'Morning Harvest', badge: 'Zero Pesticide' },
+  { name: 'Sanjivani Medical & Healthcare', est: '1996', category: 'Medical & Pharma', badge: '100% Genuine' },
+  { name: 'National Wholesale & Provisions', est: '1984', category: 'Bulk Wholesale', badge: 'Direct Counter Rate' },
   { name: 'Royal Baker & Flour Mills', est: '1976', category: 'Woodfired Sourdough', badge: 'Artisanal' },
   { name: 'Sri Laxmi Dry Fruits & Spices', est: '1989', category: 'Whole Spices', badge: 'Cold Pressed' },
-  { name: 'Shankar Fresh Greens & Herbs', est: '2001', category: 'Leafy Harvest', badge: 'Daily 6 AM' },
+  { name: 'Apollo Corner Medical & Chemist', est: '2001', category: 'Essential Medical', badge: 'Trusted Chemist' },
 ];
 
 export const VelocityMarquee: React.FC = React.memo(() => {

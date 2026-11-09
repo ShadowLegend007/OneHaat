@@ -11,6 +11,7 @@ import { AppStoreBadge, GooglePlayBadge } from '../ui/StoreBadges';
 import { Reveal } from '../ui/Reveal';
 import { ImageReveal } from '../ui/ImageReveal';
 import { AnimatedContent } from '../ui/AnimatedContent';
+import { WaterGlassButton } from '../ui/WaterGlassButton';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 
 export const FinalCTA: React.FC = React.memo(() => {
@@ -121,13 +122,15 @@ export const FinalCTA: React.FC = React.memo(() => {
                         className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm text-ink placeholder-slate-400 focus:outline-none focus:border-emerald-500 shadow-2xs"
                       />
                     </div>
-                    <button
+                    <WaterGlassButton
+                      variant="emerald"
+                      size="default"
                       type="submit"
-                      className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 whitespace-nowrap"
+                      className="rounded-xl whitespace-nowrap"
                     >
                       <Bell className="w-4 h-4" />
                       <span>Reserve Access</span>
-                    </button>
+                    </WaterGlassButton>
                   </form>
                 )}
 

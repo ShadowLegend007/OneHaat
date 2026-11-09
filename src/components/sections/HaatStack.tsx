@@ -11,6 +11,7 @@ import {
   TrendingDown,
   Clock,
   HeartHandshake,
+  Boxes,
 } from 'lucide-react';
 
 interface PillarCard {
@@ -32,18 +33,18 @@ interface PillarCard {
 const pillars: PillarCard[] = [
   {
     id: 'pillar-1',
-    badge: 'Mandi Fresh at 5:30 AM',
+    badge: 'Direct Wholesale Rates',
     badgeColor: 'bg-emerald-50 text-emerald-800 border-emerald-200/80',
-    icon: Leaf,
-    title: 'Direct Local Mandi Sourcing',
-    subtitle: 'Zero artificial cold-storage life support',
+    icon: Boxes,
+    title: 'Direct Wholesale & Bulk Supply',
+    subtitle: 'Mandi & bulk rates without corporate middleman markups',
     description:
-      'While corporate dark stores stock perishables in refrigerated warehouses for up to two weeks, OneHaat grocers pick up their daily produce directly from peri-urban mandis at the break of dawn. Plucked from fresh morning crates.',
-    metric: '4.5 Hours',
-    metricLabel: 'From farm harvest to your kitchen counter',
-    metricShortLabel: 'Farm to Counter',
-    metricIcon: Clock,
-    tags: ['Fresh Morning Mandi', 'Zero Cold Rooms', 'Naturally Ripened'],
+      'Skip inflated retail distributor chains and expensive dark-store commissions. OneHaat connects you straight to wholesale merchants and bulk depots, unlocking genuine wholesale counter pricing on daily kitchen staples, household supplies, and bulk provisions.',
+    metric: 'Wholesale Rates',
+    metricLabel: 'Direct counter procurement at authentic wholesale pricing',
+    metricShortLabel: 'Wholesale Counter Rates',
+    metricIcon: TrendingDown,
+    tags: ['Wholesale Counter', 'Zero Middlemen', 'Bulk & Daily Savings'],
     gradient: 'from-emerald-500/10 via-teal-500/5 to-transparent'
   },
   {
@@ -83,13 +84,13 @@ const pillars: PillarCard[] = [
     badge: 'Dedicated 2.5km Radius',
     badgeColor: 'bg-indigo-50 text-indigo-800 border-indigo-200/80',
     icon: Zap,
-    title: '20-Minute Neighbourhood Transit',
+    title: '9 Min 59 Sec Average Delivery',
     subtitle: 'Colony-based riders who know your building and lane',
     description:
-      'Because orders never cross chaotic ring roads or heavy bridges, your delivery arrives in under 20 minutes before your morning tea cools down. Dedicated local riders earn fair, respectful wages without highway burnout.',
-    metric: '18.2 Min',
-    metricLabel: 'Average colony dispatch to doorstep time',
-    metricShortLabel: 'Doorstep Transit',
+      'Because orders never cross chaotic ring roads or heavy bridges, your delivery arrives in an average of 9 minutes 59 seconds before your tea cools down. Dedicated local riders earn fair, respectful wages without highway burnout.',
+    metric: '9m 59s',
+    metricLabel: 'Average colony dispatch to doorstep delivery time',
+    metricShortLabel: 'Avg. Delivery Time',
     metricIcon: Clock,
     tags: ['2.5 km Radius', 'Colony Eco-Riders', 'Zero Highway Traffic'],
     gradient: 'from-indigo-500/10 via-purple-500/5 to-transparent'

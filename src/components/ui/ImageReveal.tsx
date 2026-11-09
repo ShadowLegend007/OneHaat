@@ -49,7 +49,7 @@ export const ImageReveal: React.FC<ImageRevealProps> = ({
         width={width}
         height={height}
         loading={priority ? 'eager' : 'lazy'}
-        fetchPriority={priority ? 'high' : 'auto'}
+        {...(priority ? { fetchpriority: 'high' } : {})}
         onLoad={() => setIsLoaded(true)}
         initial={{ opacity: priority ? 1 : 0, scale: priority ? 1 : 0.98 }}
         animate={

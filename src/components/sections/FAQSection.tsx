@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HelpCircle, ChevronDown, MessageCircle } from 'lucide-react';
+import { WaterGlassLink } from '../ui/WaterGlassButton';
 
 interface FAQItem {
   id: string;
@@ -27,9 +28,9 @@ const faqs: FAQItem[] = [
   {
     id: 'faq-3',
     category: 'customers',
-    question: 'How do you guarantee freshness for vegetables and farm dairy?',
+    question: 'How do you guarantee freshness and authenticity for groceries and essentials?',
     answer:
-      'Local haat shopkeepers receive morning consignments directly from peri-urban farm mandis every single day at 5:30 AM. Because inventory turns over on physical store shelves throughout the day, nothing sits in artificial refrigerated warehousing for weeks. Shopkeepers personally inspect each tomato and seal your glass milk bottles.',
+      'Local haat shopkeepers and wholesale merchants stock genuine goods directly on physical store shelves with daily turnover. Nothing sits in artificial refrigerated warehousing for weeks. Shopkeepers personally inspect each item before packing your order.',
   },
   {
     id: 'faq-4',
@@ -135,12 +136,14 @@ export const FAQSection: React.FC = React.memo(() => {
                     <div className="text-[11px] text-slate-500">Chat with our community team.</div>
                   </div>
                 </div>
-                <a
+                <WaterGlassLink
                   href="mailto:support@onehaat.com"
-                  className="px-3 py-1.5 rounded-lg bg-white border border-slate-200 text-xs font-bold text-ink hover:text-emerald-700 hover:border-emerald-300 transition-colors shadow-2xs shrink-0"
+                  variant="clear"
+                  size="sm"
+                  className="rounded-xl shrink-0"
                 >
                   Contact →
-                </a>
+                </WaterGlassLink>
               </div>
             </div>
           </div>

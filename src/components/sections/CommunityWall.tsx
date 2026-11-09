@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, Heart, ChevronLeft, ChevronRight } from 'lucide-react';
+import { WaterGlassButton } from '../ui/WaterGlassButton';
 
 interface Testimonial {
   id: string;
@@ -23,9 +24,9 @@ const testimonials: Testimonial[] = [
     neighborhood: 'Indiranagar 12th Main',
     category: 'customer',
     rating: 5,
-    highlight: 'Purest A2 milk and vine tomatoes',
+    highlight: 'Fresh groceries and genuine pharmacy care',
     quote:
-      'I was tired of soggy refrigerated greens from dark stores. With OneHaat, Ramesh ji personally selects the firmest tomatoes and sends glass bottle milk harvested that morning. Delivered in 16 minutes!',
+      'I was tired of overpriced goods and fake discounts from dark stores. With OneHaat, Ramesh ji personally selects the freshest groceries, and my neighbourhood chemist sends genuine medicines with 9m 59s average delivery!',
     avatarBg: '#D1FAE5',
     avatarText: 'PV',
   },
@@ -324,14 +325,16 @@ export const CommunityWall: React.FC = React.memo(() => {
 
         {/* 3. Carousel Navigation & Pagination */}
         <div className="flex items-center justify-between max-w-sm mx-auto w-full shrink-0 pb-1 px-4">
-          <button
+          <WaterGlassButton
+            variant="clear"
+            size="icon"
             type="button"
             onClick={handlePrev}
-            className="w-8 h-8 rounded-full border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-600 transition-all active:scale-95 shadow-2xs"
+            className="w-8 h-8 rounded-full shadow-xs"
             aria-label="Previous story"
           >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
+            <ChevronLeft className="w-4 h-4 text-slate-800" />
+          </WaterGlassButton>
 
           {/* Dots */}
           <div className="flex items-center gap-1.5">
@@ -343,7 +346,7 @@ export const CommunityWall: React.FC = React.memo(() => {
                   setSlideDirection(i > currentIndex ? 1 : -1);
                   setCurrentIndex(i);
                 }}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
+                className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
                   i === currentIndex % filteredTestimonials.length
                     ? 'w-5 bg-emerald-600'
                     : 'w-1.5 bg-slate-300 hover:bg-slate-400'
@@ -353,14 +356,16 @@ export const CommunityWall: React.FC = React.memo(() => {
             ))}
           </div>
 
-          <button
+          <WaterGlassButton
+            variant="clear"
+            size="icon"
             type="button"
             onClick={handleNext}
-            className="w-8 h-8 rounded-full border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-600 transition-all active:scale-95 shadow-2xs"
+            className="w-8 h-8 rounded-full shadow-xs"
             aria-label="Next story"
           >
-            <ChevronRight className="w-4 h-4" />
-          </button>
+            <ChevronRight className="w-4 h-4 text-slate-800" />
+          </WaterGlassButton>
         </div>
 
       </div>

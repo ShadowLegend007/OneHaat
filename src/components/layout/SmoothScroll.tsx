@@ -29,6 +29,10 @@ export const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
     lenisRef.current = lenis;
     (window as any).__lenis = lenis;
 
+    // Ensure every reload starts at the very top of the site
+    lenis.scrollTo(0, { immediate: true });
+    window.scrollTo(0, 0);
+
     // Synchronize Lenis scroll events with GSAP ScrollTrigger
     const handleScroll = () => {
       ScrollTrigger.update();
@@ -56,6 +60,8 @@ export const SmoothScroll: React.FC<SmoothScrollProps> = ({ children }) => {
         const el = document.querySelector(href);
         if (el) {
           e.preventDefault();
+          window.dispatchEvent(new CustomEvent('unlock-pinned-journey'));
+          lenis.start();
           lenis.scrollTo(el as HTMLElement, { offset: -64, duration: 1.1 });
         }
       }

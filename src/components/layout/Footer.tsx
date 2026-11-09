@@ -5,6 +5,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { AnimatedContent } from '../ui/AnimatedContent';
+import { WaterGlassButton } from '../ui/WaterGlassButton';
 
 export const Footer: React.FC = React.memo(() => {
   const [email, setEmail] = useState('');
@@ -45,7 +46,7 @@ export const Footer: React.FC = React.memo(() => {
             {subscribed ? (
               <div className="p-2.5 px-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Subscribed! We’ll send you seasonal bazaar harvest alerts.</span>
+                <span>Subscribed! We’ll send you seasonal bazaar and store updates.</span>
               </div>
             ) : (
               <form onSubmit={handleSubscribe} className="flex w-full sm:w-auto gap-2">
@@ -55,14 +56,16 @@ export const Footer: React.FC = React.memo(() => {
                   placeholder="Enter email for launch updates"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="px-4 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-ink placeholder-slate-400 focus:outline-none focus:border-emerald-500 w-full sm:w-72"
+                  className="px-4 py-2 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm text-ink placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 shadow-2xs w-full sm:w-72"
                 />
-                <button
+                <WaterGlassButton
+                  variant="dark"
+                  size="sm"
                   type="submit"
-                  className="px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition-colors shrink-0"
+                  className="rounded-xl shrink-0 px-4 py-2 font-bold"
                 >
                   Join
-                </button>
+                </WaterGlassButton>
               </form>
             )}
           </div>
@@ -98,8 +101,8 @@ export const Footer: React.FC = React.memo(() => {
             </a>
 
             <p className="text-xs text-slate-500 leading-relaxed max-w-sm">
-              The hyperlocal grocery platform dedicated to preserving generational neighborhood grocers,
-              spice mills, and farm cooperatives with 20-minute rapid delivery.
+              The hyperlocal marketplace dedicated to empowering generational neighborhood grocers,
+              pharmacy essentials, and wholesale suppliers with 9 min 59 sec average delivery.
             </p>
 
             <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">

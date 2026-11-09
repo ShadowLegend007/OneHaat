@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ChevronRight, Bell } from 'lucide-react';
+import { WaterGlassLink } from '../ui/WaterGlassButton';
 
 interface NavLinkItem {
   label: string;
@@ -112,13 +113,15 @@ export const Navbar: React.FC = React.memo(() => {
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
               <span className="whitespace-nowrap">Launching Soon</span>
             </div>
-            <a
+            <WaterGlassLink
               href="#waitlist"
-              className="inline-flex items-center gap-2 px-3.5 lg:px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap shrink-0"
+              variant="emerald"
+              size="sm"
+              className="rounded-xl px-4 py-2 text-xs font-bold whitespace-nowrap shrink-0"
             >
               <Bell className="w-3.5 h-3.5 shrink-0" />
               <span>Get Early Access</span>
-            </a>
+            </WaterGlassLink>
           </div>
 
           {/* Mobile Menu Button */}
@@ -156,13 +159,15 @@ export const Navbar: React.FC = React.memo(() => {
                 </a>
               ))}
               <div className="pt-4 border-t border-slate-100 flex flex-col gap-3">
-                <a
+                <WaterGlassLink
                   href="#waitlist"
+                  variant="emerald"
+                  size="default"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="w-full py-2.5 rounded-xl bg-emerald-600 text-white text-center text-xs font-bold shadow-sm"
+                  className="w-full py-2.5 rounded-xl text-center text-xs font-bold"
                 >
                   Get Early Access
-                </a>
+                </WaterGlassLink>
               </div>
             </div>
           </motion.div>
