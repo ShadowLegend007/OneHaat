@@ -36,7 +36,7 @@ const statementWords = [
 
 const stats = [
   { metric: '1,420+', label: 'Local Haat Partners', sub: 'Verified family grocers' },
-  { metric: '18 min', label: 'Average Delivery', sub: 'Faster than warehouse prep' },
+  { metric: '9m 59s', label: 'Average Delivery', sub: 'Faster than warehouse prep' },
   { metric: '₹0', label: 'Listing Commission', sub: 'Fair to honest shopkeepers' },
   { metric: '100%', label: 'Counter Shelf Stock', sub: 'Inspected by the shopkeeper' },
 ];

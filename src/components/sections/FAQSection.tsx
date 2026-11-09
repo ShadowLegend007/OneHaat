@@ -14,9 +14,9 @@ const faqs: FAQItem[] = [
   {
     id: 'faq-1',
     category: 'customers',
-    question: 'How does OneHaat deliver in 20 minutes without cold dark stores?',
+    question: 'How does OneHaat deliver in 9 minutes 59 seconds without cold dark stores?',
     answer:
-      'Unlike traditional quick-commerce apps that store produce in massive suburban warehouses and dispatch across long congested routes, OneHaat only connects you to verified neighborhood shops within a 2.5 km radius. The shopkeeper hand-packs your bag immediately, and a local rider reaches your doorstep in 15–20 minutes.',
+      'Unlike traditional quick-commerce apps that store produce in massive suburban warehouses and dispatch across long congested routes, OneHaat only connects you to verified neighborhood shops within a 2.5 km radius. The shopkeeper hand-packs your bag immediately, and a local rider reaches your doorstep in an average of 9 minutes 59 seconds.',
   },
   {
     id: 'faq-2',
@@ -133,11 +133,13 @@ export const FAQSection: React.FC = React.memo(() => {
                   </div>
                   <div>
                     <div className="font-bold text-xs text-ink">Still have questions?</div>
-                    <div className="text-[11px] text-slate-500">Chat with our community team.</div>
+                    <div className="text-[11px] text-slate-500">
+                      Reach us at <a href="mailto:access.onehaat@gmail.com" className="font-semibold text-emerald-700 hover:underline">access.onehaat@gmail.com</a>
+                    </div>
                   </div>
                 </div>
                 <WaterGlassLink
-                  href="mailto:support@onehaat.com"
+                  href="mailto:access.onehaat@gmail.com"
                   variant="clear"
                   size="sm"
                   className="rounded-xl shrink-0"
@@ -287,10 +289,10 @@ export const FAQSection: React.FC = React.memo(() => {
           <div className="shrink-0 flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200/70 text-xs">
             <span className="text-[11px] text-slate-600 font-medium">Have questions?</span>
             <a
-              href="mailto:support@onehaat.com"
+              href="mailto:access.onehaat@gmail.com"
               className="text-[11px] font-bold text-emerald-700 hover:underline"
             >
-              Contact Team →
+              access.onehaat@gmail.com →
             </a>
           </div>
         </div>

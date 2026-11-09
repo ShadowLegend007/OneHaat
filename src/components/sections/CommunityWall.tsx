@@ -140,7 +140,7 @@ export const CommunityWall: React.FC = React.memo(() => {
   return (
     <section
       id="stories"
-      className="relative min-h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-4rem)] lg:max-h-[calc(100dvh-4rem)] flex flex-col justify-between py-6 sm:py-8 lg:py-5 px-4 sm:px-6 lg:px-8 bg-slate-50/50 overflow-hidden scroll-mt-16 select-none"
+      className="relative z-20 min-h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-4rem)] lg:max-h-[calc(100dvh-4rem)] flex flex-col justify-between py-6 sm:py-8 lg:py-5 px-4 sm:px-6 lg:px-8 bg-[#f8fafc] overflow-hidden scroll-mt-16 select-none"
     >
       {/* Background Soft Pastel Blob */}
       <div

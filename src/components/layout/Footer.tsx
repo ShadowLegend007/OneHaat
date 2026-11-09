@@ -1,28 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Heart,
-  CheckCircle2,
   ShieldCheck,
+  Mail,
 } from 'lucide-react';
 import { AnimatedContent } from '../ui/AnimatedContent';
-import { WaterGlassButton } from '../ui/WaterGlassButton';
 
 export const Footer: React.FC = React.memo(() => {
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email.trim()) {
-      setSubscribed(true);
-    }
-  };
-
   return (
     <footer className="relative bg-white border-t border-slate-200/80 pt-16 pb-12 overflow-hidden text-slate-600 text-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Top Status & Newsletter Row */}
+        {/* Top Status & Contact Row */}
+        {/* Top Operational Status Bar */}
         <div className="pb-8 sm:pb-12 border-b border-slate-100 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 lg:gap-8">
           
           {/* Live Operational Status Indicator */}
@@ -39,35 +29,6 @@ export const Footer: React.FC = React.memo(() => {
             <span className="text-xs text-slate-400">
               1,420+ local shops connecting across Bengaluru
             </span>
-          </div>
-
-          {/* Neighborhood Newsletter */}
-          <div className="w-full md:w-auto flex items-center justify-start md:justify-end">
-            {subscribed ? (
-              <div className="p-2.5 px-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Subscribed! We’ll send you seasonal bazaar and store updates.</span>
-              </div>
-            ) : (
-              <form onSubmit={handleSubscribe} className="flex w-full sm:w-auto gap-2">
-                <input
-                  type="email"
-                  required
-                  placeholder="Enter email for launch updates"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="px-4 py-2 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm text-ink placeholder-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 shadow-2xs w-full sm:w-72"
-                />
-                <WaterGlassButton
-                  variant="dark"
-                  size="sm"
-                  type="submit"
-                  className="rounded-xl shrink-0 px-4 py-2 font-bold"
-                >
-                  Join
-                </WaterGlassButton>
-              </form>
-            )}
           </div>
         </div>
 
@@ -148,7 +109,7 @@ export const Footer: React.FC = React.memo(() => {
                 <li><a href="#faq" className="hover:text-emerald-700 transition-colors">Price Parity Guarantee</a></li>
                 <li><a href="#faq" className="hover:text-emerald-700 transition-colors">Privacy & Data Security</a></li>
                 <li><a href="#faq" className="hover:text-emerald-700 transition-colors">Merchant Code of Ethics</a></li>
-                <li><a href="#faq" className="hover:text-emerald-700 transition-colors">FSSAI Compliance</a></li>
+                <li><a href="mailto:access.onehaat@gmail.com" className="hover:text-emerald-700 transition-colors font-medium text-emerald-800">Support: access.onehaat@gmail.com</a></li>
               </ul>
             </div>
           </div>

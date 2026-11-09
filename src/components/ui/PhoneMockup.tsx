@@ -38,7 +38,7 @@ const SCREENS = [
   {
     id: 'delivered' as PhoneScreenType,
     src: '/step-4-mockup.svg',
-    alt: 'Step 04 - Doorstep in Under 20 Mins',
+    alt: 'Step 04 - Doorstep in 9 Min 59 Sec',
     width: 658,
     height: 805,
     glow: 'radial-gradient(circle, rgba(5, 150, 105, 0.45) 0%, rgba(56, 189, 248, 0.3) 50%, transparent 75%)',

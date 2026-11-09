@@ -115,7 +115,7 @@ const pillars: PillarCard[] = [
 
 export const HaatStack: React.FC = React.memo(() => {
   return (
-    <section id="pillars" className="relative bg-slate-50/60 py-12 sm:py-16 scroll-mt-16 overflow-visible">
+    <section id="pillars" className="relative z-10 bg-slate-50/60 py-12 sm:py-16 scroll-mt-16 overflow-visible">
       {/* Ambient background glow */}
       <div
         className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[750px] h-[750px] rounded-full masked-pastel-blob opacity-25 pointer-events-none -z-10"
@@ -153,7 +153,7 @@ export const HaatStack: React.FC = React.memo(() => {
         rotationAmount={4}
         tiltAmount={3.5}
         dimAmount={0.16}
-        holdDistance={240}
+        holdDistance={320}
         smoothScroll={false}
         className="w-full max-w-4xl mx-auto"
       >
