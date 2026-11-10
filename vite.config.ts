@@ -203,13 +203,15 @@ function resendApiPlugin() {
             }
 
             const apiKey = process.env.RESEND_API_KEY || process.env.VITE_RESEND_API_KEY || '';
+            const fromEmail = process.env.RESEND_FROM_EMAIL || process.env.VITE_RESEND_FROM_EMAIL || 'OneHaat <onboarding@resend.dev>';
+            const adminEmail = process.env.CONTACT_EMAIL || process.env.VITE_CONTACT_EMAIL || 'access.onehaat@gmail.com';
 
             const userName = extractNameFromEmail(email);
             const userHandle = email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '').toLowerCase() || 'neighbor';
             const submissionTime = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
             const thankYouHtml = generateThankYouHtml(userName, email, userHandle);
 
-            // 1. Send Admin Notification to access.onehaat@gmail.com
+            // 1. Send Admin Notification
             const adminPromise = fetch('https://api.resend.com/emails', {
               method: 'POST',
               headers: {
@@ -217,8 +219,8 @@ function resendApiPlugin() {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                from: 'OneHaat Launchpad <onboarding@resend.dev>',
-                to: ['access.onehaat@gmail.com'],
+                from: fromEmail,
+                to: [adminEmail],
                 reply_to: email,
                 subject: `🚀 New VIP Reservation: ${userName} (${email})`,
                 html: `
@@ -258,7 +260,7 @@ function resendApiPlugin() {
                     </p>
 
                     <div style="border-top: 1px solid #f1f5f9; padding-top: 16px; font-size: 12px; color: #94a3b8;">
-                      OneHaat Launchpad • Contact: <a href="mailto:access.onehaat@gmail.com" style="color: #059669; text-decoration: none;">access.onehaat@gmail.com</a>
+                      OneHaat Launchpad • Contact: <a href="mailto:${adminEmail}" style="color: #059669; text-decoration: none;">${adminEmail}</a>
                     </div>
                   </div>
                 `,
@@ -273,37 +275,17 @@ function resendApiPlugin() {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                from: 'OneHaat <onboarding@resend.dev>',
+                from: fromEmail,
                 to: [email],
-                reply_to: 'access.onehaat@gmail.com',
+                reply_to: adminEmail,
                 subject: `Welcome to OneHaat Early Access, ${userName}! 🎉 Your Beta Pass & Username Reserved`,
                 html: thankYouHtml,
               }),
             });
 
-            // 3. Send Thank-You copy to access.onehaat@gmail.com
-            const adminCopyPromise =
-              email.toLowerCase() !== 'access.onehaat@gmail.com'
-                ? fetch('https://api.resend.com/emails', {
-                    method: 'POST',
-                    headers: {
-                      Authorization: `Bearer ${apiKey}`,
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                      from: 'OneHaat <onboarding@resend.dev>',
-                      to: ['access.onehaat@gmail.com'],
-                      reply_to: email,
-                      subject: `[User Copy: ${userName}] Welcome to OneHaat Early Access! 🎉`,
-                      html: thankYouHtml,
-                    }),
-                  })
-                : Promise.resolve(null);
-
-            const [adminRes, userRes, adminCopyRes] = await Promise.allSettled([
+            const [adminRes, userRes] = await Promise.allSettled([
               adminPromise,
               userPromise,
-              adminCopyPromise,
             ]);
 
             let userDeliveryStatus = 'sent';
@@ -312,7 +294,7 @@ function resendApiPlugin() {
             if (userRes.status === 'fulfilled') {
               const userJson = await userRes.value.json().catch(() => ({}));
               if (!userRes.value.ok) {
-                userDeliveryStatus = 'requires_domain_verification';
+                userDeliveryStatus = 'failed';
                 userDeliveryError = userJson;
                 console.warn('[Resend Warning]:', userJson);
               }
