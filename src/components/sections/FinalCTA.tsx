@@ -47,6 +47,10 @@ export const FinalCTA: React.FC = React.memo(() => {
     mouseY.set(0.5);
   };
 
+  /**
+   * Handle reservation form submission.
+   * Dispatches the applicant email to the secure backend endpoint.
+   */
   const handleReserve = async (e: React.FormEvent) => {
     e.preventDefault();
     const cleanEmail = email.trim();
@@ -56,35 +60,14 @@ export const FinalCTA: React.FC = React.memo(() => {
     setReservedEmail(cleanEmail);
 
     try {
-      // 1. Send reservation to the serverless / Vite dev endpoint
       const response = await fetch('/api/reserve', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: cleanEmail }),
       });
 
-      // 2. Fallback for static environments without a serverless backend
       if (!response.ok) {
-        const apiKey = (import.meta as any).env?.VITE_RESEND_API_KEY || '';
-
-        try {
-          await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${apiKey}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              from: 'OneHaat Launchpad <onboarding@resend.dev>',
-              to: ['access.onehaat@gmail.com'],
-              reply_to: cleanEmail,
-              subject: `🚀 New VIP Early Access Reservation: ${cleanEmail}`,
-              html: `<p>New early access reservation from <strong>${cleanEmail}</strong></p>`,
-            }),
-          });
-        } catch (fallbackErr) {
-          // Gracefully continue even if browser CORS or adblocker blocks direct API
-        }
+        console.warn('Reservation endpoint returned non-200 status code');
       }
 
       setReserved(true);
