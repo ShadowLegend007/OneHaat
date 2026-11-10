@@ -66,7 +66,6 @@ export const LiquidGlassIntro: React.FC<LiquidGlassIntroProps> = ({ onComplete }
           }}
           onClick={handleDismiss}
           className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white select-none cursor-pointer overflow-hidden"
-          title="Click to skip"
         >
           <div className="w-full max-w-4xl flex items-center justify-center p-4">
             <LiquidGlassLogo
@@ -81,9 +80,6 @@ export const LiquidGlassIntro: React.FC<LiquidGlassIntroProps> = ({ onComplete }
               dispersion={1.2}
               style={{ height: 480, width: '100%', maxWidth: '100vw' }}
             />
-          </div>
-          <div className="absolute bottom-8 text-center text-xs text-slate-400 font-medium tracking-wide">
-            Click anywhere to enter
           </div>
         </motion.div>
       )}
