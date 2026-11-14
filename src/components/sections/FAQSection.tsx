@@ -209,9 +209,9 @@ export const FAQSection: React.FC = React.memo(() => {
               <span>Got Questions?</span>
             </div>
 
-            <h2 className="font-display font-extrabold text-xl sm:text-2xl text-ink tracking-tight">
+            <div role="heading" aria-level={2} className="font-display font-extrabold text-xl sm:text-2xl text-ink tracking-tight">
               Frequently asked <span className="editorial-accent gradient-text-emerald italic font-normal">questions.</span>
-            </h2>
+            </div>
 
             {/* Mobile Category Tabs */}
             <div className="flex items-center justify-center gap-1.5 mt-2 flex-wrap">

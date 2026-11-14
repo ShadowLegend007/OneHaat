@@ -1,0 +1,26 @@
+# OneHaat
+> Hyperlocal haat and grocery delivery platform connecting consumers to verified neighborhood grocers, authentic spice mills, and daily haats with zero dark-store markup and 9-minute 59-second average delivery.
+
+## Platform Summary
+- Platform Name: OneHaat
+- Legal Entity: OneHaat Technologies Pvt. Ltd.
+- Official Website: https://[YOURDOMAIN.com]
+- Primary Operating Region: Bengaluru, Karnataka, India
+- Average Delivery Time: 9 minutes 59 seconds
+- Merchant Listing Commission: 0% (zero listing cuts for local shopkeepers)
+- Pricing Guarantee: 100% price parity with printed GST store bill inside every tote bag
+- Support Email: access.onehaat@gmail.com
+
+## Core Value Pillars
+- Direct Store Shelves: Goods are hand-packed by generational family grocers from physical shelves, not artificial suburban refrigerated warehouses.
+- Counter-Shelf Pricing: Transparent pricing matching what neighborhood walk-in customers pay.
+- Zero Dark Stores: Preserving neighborhood businesses and local economic vitality.
+- FSSAI Certified: Fully certified and compliant with food safety regulations.
+
+## Frequently Asked Questions
+- Q: How does OneHaat deliver in 9 minutes 59 seconds without cold dark stores?
+  A: OneHaat connects shoppers only to verified neighborhood shops within a 2.5 km colony radius. The shopkeeper hand-packs immediately and local riders deliver in 9m 59s.
+- Q: Are product prices marked up?
+  A: Never. 100% price parity with printed GST retail bill included.
+- Q: What does OneHaat charge merchants?
+  A: 0% listing commission on counter sales. Merchants retain 100% of their retail margin.

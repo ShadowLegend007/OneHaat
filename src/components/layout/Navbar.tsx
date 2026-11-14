@@ -68,7 +68,7 @@ export const Navbar: React.FC = React.memo(() => {
           
           {/* Brand Logo & Wordmark with Permanent Aspect Ratio (Zero CLS) */}
           <a
-            href="#"
+            href="/"
             className="flex items-center group outline-none focus:outline-none focus:ring-0 focus-visible:outline-none select-none py-1"
             aria-label="OneHaat Home"
           >

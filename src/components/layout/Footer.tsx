@@ -24,7 +24,7 @@ export const Footer: React.FC = React.memo(() => {
           {/* Brand Info (5 cols on lg) */}
           <div className="lg:col-span-5 space-y-4">
             <a
-              href="#"
+              href="/"
               className="inline-flex items-center group outline-none focus:outline-none focus:ring-0 focus-visible:outline-none select-none"
               aria-label="OneHaat Home"
             >

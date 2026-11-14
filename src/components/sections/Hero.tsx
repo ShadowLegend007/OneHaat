@@ -301,7 +301,7 @@ export const Hero: React.FC<HeroProps> = React.memo(({ isLoaded = true }) => {
                   {/* Main 3D Hero Mockup Illustration with Dedicated ImageReveal (Zero CLS + Smooth Reveal Animation) */}
                   <ImageReveal
                     src="/hero-character-mockup.svg"
-                    alt="OneHaat App and Character"
+                    alt="OneHaat instant delivery mobile app with trusted local neighborhood grocery delivery in Bengaluru"
                     aspectRatio="600.75 / 586.5"
                     width={801}
                     height={782}

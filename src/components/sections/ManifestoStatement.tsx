@@ -94,6 +94,7 @@ export const ManifestoStatement: React.FC = React.memo(() => {
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Subtitle Badge */}
+        <h2 className="sr-only">Our Vision and Manifesto</h2>
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/60 text-emerald-800 text-xs font-bold tracking-wide uppercase mb-8 shadow-xs">
           <Heart className="w-3.5 h-3.5 text-emerald-600 fill-emerald-600" />
           <span>Our Core Conviction</span>

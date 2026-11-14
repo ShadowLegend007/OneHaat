@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, Suspense, lazy } from 'react';
 import { SmoothScroll } from './components/layout/SmoothScroll';
 import { AmbientBackground } from './components/ui/AmbientBackground';
 import { LiquidGlassIntro } from './components/intro/LiquidGlassIntro';
@@ -7,16 +7,19 @@ import { Footer } from './components/layout/Footer';
 import { ErrorBoundary } from './components/ui/ErrorBoundary';
 import { AnimatedContent } from './components/ui/AnimatedContent';
 import { ClickSpark } from './components/ui/ClickSpark';
+import { SEO } from './components/seo/SEO';
 
-// Critical Above-the-Fold Teaser Sections
+// Critical Above-the-Fold Teaser Sections (Eagerly Loaded)
 import { Hero } from './components/sections/Hero';
 import { VelocityMarquee } from './components/sections/VelocityMarquee';
 import { ManifestoStatement } from './components/sections/ManifestoStatement';
 import { HaatStack } from './components/sections/HaatStack';
 import { PinnedJourney } from './components/sections/PinnedJourney';
-import CommunityWall from './components/sections/CommunityWall';
-import FAQSection from './components/sections/FAQSection';
-import FinalCTA from './components/sections/FinalCTA';
+
+// Below-the-Fold Sections (Lazy-Loaded for Optimal Mobile Core Web Vitals)
+const CommunityWall = lazy(() => import('./components/sections/CommunityWall'));
+const FAQSection = lazy(() => import('./components/sections/FAQSection'));
+const FinalCTA = lazy(() => import('./components/sections/FinalCTA'));
 
 export const App: React.FC = () => {
   const [isIntroComplete, setIsIntroComplete] = useState(false);
@@ -45,6 +48,7 @@ export const App: React.FC = () => {
       className="w-full min-h-screen"
     >
       <SmoothScroll>
+        <SEO />
         <div className="relative min-h-screen bg-white text-ink flex flex-col font-sans selection:bg-emerald-500 selection:text-white">
           
           {/* Skip to main content accessibility link */}
@@ -93,20 +97,23 @@ export const App: React.FC = () => {
               <PinnedJourney />
             </ErrorBoundary>
 
-            {/* Section 7: Community Voices & Trust Wall */}
-            <AnimatedContent distance={40} direction="vertical" duration={0.85} threshold={0.08}>
-              <ErrorBoundary><CommunityWall /></ErrorBoundary>
-            </AnimatedContent>
+            {/* Below-the-fold Lazy Loaded Sections */}
+            <Suspense fallback={<div className="min-h-[200px]" />}>
+              {/* Section 7: Community Voices & Trust Wall */}
+              <AnimatedContent distance={40} direction="vertical" duration={0.85} threshold={0.08}>
+                <ErrorBoundary><CommunityWall /></ErrorBoundary>
+              </AnimatedContent>
 
-            {/* Section 8: Frequently Asked Questions */}
-            <AnimatedContent distance={40} direction="vertical" duration={0.85} threshold={0.08}>
-              <ErrorBoundary><FAQSection /></ErrorBoundary>
-            </AnimatedContent>
+              {/* Section 8: Frequently Asked Questions */}
+              <AnimatedContent distance={40} direction="vertical" duration={0.85} threshold={0.08}>
+                <ErrorBoundary><FAQSection /></ErrorBoundary>
+              </AnimatedContent>
 
-            {/* Section 9: VIP Early Access Pass & Launch Reservation Hub */}
-            <AnimatedContent distance={40} direction="vertical" duration={0.85} threshold={0.08}>
-              <ErrorBoundary><FinalCTA /></ErrorBoundary>
-            </AnimatedContent>
+              {/* Section 9: VIP Early Access Pass & Launch Reservation Hub */}
+              <AnimatedContent distance={40} direction="vertical" duration={0.85} threshold={0.08}>
+                <ErrorBoundary><FinalCTA /></ErrorBoundary>
+              </AnimatedContent>
+            </Suspense>
           </main>
 
           {/* Editorial Teaser Footer with AnimatedContent */}
